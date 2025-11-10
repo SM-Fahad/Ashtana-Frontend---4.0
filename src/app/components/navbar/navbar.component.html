@@ -1,0 +1,112 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light bg-opacity-25 shadow-sm" id="mainNavbar">
+  <!-- Remove fixed-top and replace with sticky-top -->
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <img src="assets/Ashtana-preview.png" alt="logo" style="height: 65px;">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Search Bar -->
+      <form class="d-flex w-75" role="search">
+        <input class="form-control mx-5 me-3 rounded-5" type="search" placeholder="Search for Products"
+          aria-label="Search" />
+        <button class="btn btn-dark rounded-5 me-5" type="submit"><i class="bi bi-search"></i></button>
+      </form>
+
+      <!-- Navigation Icons -->
+      <div class="navbar-nav ms-auto align-items-center flex-row">
+        
+        <!-- ACCOUNT / USER INFO -->
+        <div class="nav-item me-4" *ngIf="isLoggedIn && userName">
+          <div class="text-center">
+            <a class="nav-link active" routerLink="/profile">
+              <div class="icon-wrapper">
+                <i class="bi bi-person" style="font-size: 30px;"></i>
+              </div>
+              <span class="fw-medium">{{ userName }}</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ADMIN (Only show if user has admin role) -->
+        <div class="nav-item me-4" *ngIf="isLoggedIn && isAdmin">
+          <div class="text-center">
+            <a class="nav-link active" routerLink="/admin">
+              <div class="icon-wrapper">
+                <i class="bi bi-gear" style="font-size: 30px;"></i>
+              </div>
+              <span class="fw-medium">ADMIN</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- My Fav -->
+        <div class="nav-item me-4">
+          <div class="text-center">
+            <a class="nav-link active" routerLink="/favorites">
+              <div class="icon-wrapper">
+                <i class="bi bi-heart" style="font-size: 30px;"></i>
+              </div>
+              <span class="fw-medium">FAVOURITES</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- My Bag -->
+        <div class="nav-item me-4">
+          <div class="text-center position-relative">
+            <a class="nav-link active" routerLink="/cart">
+              <div class="icon-wrapper position-relative">
+                <i class="bi bi-bag" style="font-size: 30px;"></i>
+                <!-- Cart Count Badge -->
+                <span *ngIf="cartCount > 0" class="cart-badge" [class.pulse]="showPulse">
+                  {{ cartCount > 99 ? '99+' : cartCount }}
+                </span>
+              </div>
+              <span class="fw-medium">BAG</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Authentication -->
+        <div class="nav-item me-2" *ngIf="!isLoggedIn">
+          <div class="text-center">
+            <a class="nav-link active" routerLink="/login">
+              <div class="icon-wrapper">
+                <i class="bi bi-box-arrow-in-right" style="font-size: 30px;"></i>
+              </div>
+              <span class="fw-medium">LOGIN</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="nav-item me-2" *ngIf="!isLoggedIn">
+          <div class="text-center">
+            <a class="nav-link active" routerLink="/signup">
+              <div class="icon-wrapper">
+                <i class="bi bi-person-plus" style="font-size: 30px;"></i>
+              </div>
+              <span class="fw-medium">SIGNUP</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="nav-item me-2" *ngIf="isLoggedIn">
+          <div class="text-center">
+            <a class="nav-link active" (click)="logout()" style="cursor: pointer;">
+              <div class="icon-wrapper">
+                <i class="bi bi-box-arrow-right" style="font-size: 30px;"></i>
+              </div>
+              <span class="fw-medium">LOGOUT</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+

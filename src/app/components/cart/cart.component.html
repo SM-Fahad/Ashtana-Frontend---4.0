@@ -1,0 +1,145 @@
+<div class="container">
+  <div class="container-fluid py-4" style="padding-top: 80px;">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <a routerLink="/products" class="text-decoration-none text-muted small mb-2 d-inline-flex align-items-center">
+        <i class="bi bi-arrow-left me-2"></i>
+        Continue Shopping
+      </a>
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="h4 fw-bold mb-1">Shopping Bag</h2>
+          <p class="text-muted small mb-0">{{ cartItems.length }} item{{ cartItems.length !== 1 ? 's' : '' }} in your bag</p>
+        </div>
+        <div class="bg-light rounded p-3 border">
+          <span class="text-muted small d-block">Total</span>
+          <span class="h5 fw-bold mb-0">{{ total | currency }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="cartItems.length === 0" class="text-center py-5">
+    <div class="text-muted mb-3">
+      <i class="bi bi-bag display-4"></i>
+    </div>
+    <h3 class="h5 fw-bold text-dark mb-2">Your Bag is Empty</h3>
+    <p class="text-muted mb-4">Looks like you haven't added anything to your bag yet.</p>
+    <button class="btn btn-dark btn-sm" routerLink="/products">
+      Start Shopping
+    </button>
+  </div>
+
+  <!-- Cart Content -->
+  <div *ngIf="cartItems.length > 0" class="row">
+    <!-- Items Column -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div *ngFor="let item of cartItems; let i = index" class="border-bottom p-3">
+            <div class="row align-items-center">
+              <!-- Product Image -->
+              <div class="col-auto">
+                <img [src]="item.imageUrl" alt="{{ item.name }}" 
+                     class="rounded" style="width: 70px; height: 70px; object-fit: cover;">
+              </div>
+              
+              <!-- Product Details -->
+              <div class="col">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <h6 class="fw-bold mb-0 text-dark">{{ item.name }}</h6>
+                  <button class="btn btn-outline-danger btn-sm" (click)="removeItem(i)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+                
+                <!-- Variants -->
+                <div class="mb-2">
+                  <span *ngIf="item.selectedSize" class="badge bg-light text-dark border me-1">
+                    Size: {{ item.selectedSize }}
+                  </span>
+                  <span *ngIf="item.selectedColor" class="badge bg-light text-dark border">
+                    Color: {{ item.selectedColor }}
+                  </span>
+                </div>
+                
+                <!-- Price -->
+                <div class="text-dark fw-semibold mb-2">{{ item.price | currency }}</div>
+                
+                <!-- Quantity Controls -->
+                <div class="d-flex align-items-center">
+                  <div class="btn-group btn-group-sm me-3">
+                    <button class="btn btn-outline-secondary" 
+                            (click)="decreaseQuantity(i)"
+                            [disabled]="item.quantity <= 1">
+                      <i class="bi bi-dash"></i>
+                    </button>
+                    <span class="btn btn-outline-secondary disabled px-3">
+                      {{ item.quantity }}
+                    </span>
+                    <button class="btn btn-outline-secondary" (click)="increaseQuantity(i)">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+                  <div class="text-dark fw-bold small">
+                    Total: {{ item.price * item.quantity | currency }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm sticky-top" style="top: 90px;">
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-3">Order Summary</h5>
+          
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted small">Subtotal ({{ getTotalItems() }} items)</span>
+            <span class="fw-semibold">{{ total | currency }}</span>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-muted small">Shipping</span>
+            <span class="text-success small fw-semibold">FREE</span>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-muted small">Tax</span>
+            <span class="text-muted small">Calculated at checkout</span>
+          </div>
+          
+          <hr class="my-3">
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="fw-bold">Estimated Total</span>
+            <span class="h5 fw-bold text-dark mb-0">{{ total | currency }}</span>
+          </div>
+          
+          <button class="btn btn-dark w-100 mb-3" routerLink="/checkout">
+            Proceed to Checkout
+            <i class="bi bi-arrow-right ms-2"></i>
+          </button>
+          
+          <div class="text-center text-muted small mb-3">
+            <i class="bi bi-shield-check text-success me-1"></i>
+            Secure checkout guaranteed
+          </div>
+          
+          <div class="border-top pt-3">
+            <h6 class="fw-bold small mb-2">Delivery Information</h6>
+            <p class="text-muted small mb-1">Free standard shipping on all orders</p>
+            <p class="text-muted small mb-0">Estimated delivery: 3-5 business days</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

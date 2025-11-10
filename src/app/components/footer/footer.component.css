@@ -1,0 +1,14 @@
+.payment-icon {
+  width: 60px;
+  height: 30px;
+  filter: brightness(0) invert(1); /* white logos */
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.payment-icon:hover {
+  transform: scale(1.1);
+}
+
+
+
+

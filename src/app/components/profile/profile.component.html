@@ -1,0 +1,350 @@
+<div class="profile-container">
+  <div class="profile-header bg-white border-bottom">
+    <div class="container">
+      <div class="row align-items-center py-4">
+        <div class="col-md-8">
+          <h1 class="h2 fw-bold text-dark mb-2">My Profile</h1>
+          <p class="text-muted mb-0">Manage your account settings and preferences</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <div class="d-flex align-items-center justify-content-end gap-3" *ngIf="user">
+            <div class="avatar bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
+                 style="width: 60px; height: 60px; font-weight: bold; font-size: 1.2rem;">
+              {{ getInitials() }}
+            </div>
+            <div class="text-end">
+              <div class="fw-semibold text-dark">{{ user.userFirstName }} {{ user.userLastName }}</div>
+              <span class="badge bg-dark">{{ userRole }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-4">
+    <div class="row">
+      <!-- Sidebar Navigation -->
+      <div class="col-lg-3 mb-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-3">
+            <div class="nav flex-column nav-pills">
+              <button class="nav-link text-start mb-2" 
+                      [class.active]="activeTab === 'profile'"
+                      (click)="switchTab('profile')">
+                <i class="bi bi-person me-2"></i>
+                Profile Information
+              </button>
+              <button class="nav-link text-start mb-2" 
+                      [class.active]="activeTab === 'password'"
+                      (click)="switchTab('password')">
+                <i class="bi bi-shield-lock me-2"></i>
+                Change Password
+              </button>
+              <button class="nav-link text-start mb-2" 
+                      [class.active]="activeTab === 'addresses'"
+                      (click)="switchTab('addresses')">
+                <i class="bi bi-geo-alt me-2"></i>
+                Addresses
+                <span class="badge bg-primary ms-1" *ngIf="addresses.length > 0">{{ addresses.length }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <!-- Alerts -->
+        <div class="alert alert-success alert-dismissible fade show" *ngIf="successMessage">
+          <i class="bi bi-check-circle me-2"></i>
+          {{ successMessage }}
+          <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
+        
+        <div class="alert alert-danger alert-dismissible fade show" *ngIf="errorMessage">
+          <i class="bi bi-exclamation-circle me-2"></i>
+          {{ errorMessage }}
+          <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+        </div>
+
+        <!-- Profile Information Tab -->
+        <div *ngIf="activeTab === 'profile'" class="tab-content">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+              <h3 class="card-title h5 fw-bold mb-0">
+                <i class="bi bi-person me-2"></i>
+                Personal Information
+              </h3>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">First Name</label>
+                    <input type="text" formControlName="userFirstName" class="form-control"
+                           [class.is-invalid]="profileForm.get('userFirstName')?.invalid && profileForm.get('userFirstName')?.touched">
+                    <div class="invalid-feedback">First name is required</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Last Name</label>
+                    <input type="text" formControlName="userLastName" class="form-control"
+                           [class.is-invalid]="profileForm.get('userLastName')?.invalid && profileForm.get('userLastName')?.touched">
+                    <div class="invalid-feedback">Last name is required</div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Username</label>
+                    <input type="text" formControlName="userName" class="form-control" readonly>
+                    <small class="text-muted">Username cannot be changed</small>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Email Address</label>
+                    <input type="email" formControlName="email" class="form-control"
+                           [class.is-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                    <div class="invalid-feedback">Please enter a valid email address</div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Phone Number</label>
+                    <input type="tel" formControlName="phone" class="form-control" placeholder="+1 (555) 123-4567">
+                  </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                  <button type="submit" class="btn btn-dark" [disabled]="isSaving || profileForm.invalid">
+                    <span *ngIf="!isSaving">Save Changes</span>
+                    <span *ngIf="isSaving">
+                      <i class="bi bi-arrow-repeat spinner"></i>
+                      Saving...
+                    </span>
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" (click)="loadUserProfile()">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password Tab -->
+        <div *ngIf="activeTab === 'password'" class="tab-content">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+              <h3 class="card-title h5 fw-bold mb-0">
+                <i class="bi bi-shield-lock me-2"></i>
+                Change Password
+              </h3>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Current Password</label>
+                    <input type="password" formControlName="currentPassword" class="form-control"
+                           [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+                    <div class="invalid-feedback">Current password is required</div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">New Password</label>
+                    <input type="password" formControlName="newPassword" class="form-control"
+                           [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                    <div class="invalid-feedback">Password must be at least 6 characters long</div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Confirm New Password</label>
+                    <input type="password" formControlName="confirmPassword" class="form-control"
+                           [class.is-invalid]="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+                    <div class="invalid-feedback" *ngIf="passwordForm.get('confirmPassword')?.errors?.['required']">
+                      Please confirm your password
+                    </div>
+                    <div class="invalid-feedback" *ngIf="passwordForm.get('confirmPassword')?.errors?.['passwordMismatch']">
+                      Passwords do not match
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                  <button type="submit" class="btn btn-dark" [disabled]="isChangingPassword || passwordForm.invalid">
+                    <span *ngIf="!isChangingPassword">Change Password</span>
+                    <span *ngIf="isChangingPassword">
+                      <i class="bi bi-arrow-repeat spinner"></i>
+                      Changing...
+                    </span>
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" (click)="passwordForm.reset()">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Addresses Tab -->
+        <div *ngIf="activeTab === 'addresses'" class="tab-content">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+              <h3 class="card-title h5 fw-bold mb-0">
+                <i class="bi bi-geo-alt me-2"></i>
+                Saved Addresses
+              </h3>
+            </div>
+            <div class="card-body">
+              
+              <!-- Loading State -->
+              <div *ngIf="loadingAddresses" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Loading addresses...</p>
+              </div>
+
+              <!-- Address Form -->
+              <div *ngIf="showAddressForm && !loadingAddresses" class="mb-4">
+                <div class="card border-primary">
+                  <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">
+                      <i class="bi" [class.bi-pencil]="editingAddress" [class.bi-plus-circle]="!editingAddress" class="me-2"></i>
+                      {{ editingAddress ? 'Edit Address' : 'Add New Address' }}
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <form [formGroup]="addressForm" (ngSubmit)="onAddressSubmit()">
+                      <div class="row g-3">
+                        <div class="col-md-6">
+                          <label class="form-label fw-semibold">Recipient Name *</label>
+                          <input type="text" formControlName="recipientName" class="form-control" 
+                                 [class.is-invalid]="addressForm.get('recipientName')?.invalid && addressForm.get('recipientName')?.touched">
+                          <div class="invalid-feedback">Recipient name is required</div>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label fw-semibold">Phone *</label>
+                          <input type="tel" formControlName="phone" class="form-control"
+                                 [class.is-invalid]="addressForm.get('phone')?.invalid && addressForm.get('phone')?.touched">
+                          <div class="invalid-feedback">Phone number is required</div>
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label fw-semibold">Street Address *</label>
+                          <input type="text" formControlName="street" class="form-control"
+                                 [class.is-invalid]="addressForm.get('street')?.invalid && addressForm.get('street')?.touched">
+                          <div class="invalid-feedback">Street address is required</div>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label fw-semibold">City *</label>
+                          <input type="text" formControlName="city" class="form-control"
+                                 [class.is-invalid]="addressForm.get('city')?.invalid && addressForm.get('city')?.touched">
+                          <div class="invalid-feedback">City is required</div>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label fw-semibold">State *</label>
+                          <input type="text" formControlName="state" class="form-control"
+                                 [class.is-invalid]="addressForm.get('state')?.invalid && addressForm.get('state')?.touched">
+                          <div class="invalid-feedback">State is required</div>
+                        </div>
+                        <div class="col-md-4">
+                          <label class="form-label fw-semibold">Postal Code *</label>
+                          <input type="text" formControlName="postalCode" class="form-control"
+                                 [class.is-invalid]="addressForm.get('postalCode')?.invalid && addressForm.get('postalCode')?.touched">
+                          <div class="invalid-feedback">Postal code is required</div>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label fw-semibold">Country *</label>
+                          <input type="text" formControlName="country" class="form-control"
+                                 [class.is-invalid]="addressForm.get('country')?.invalid && addressForm.get('country')?.touched">
+                          <div class="invalid-feedback">Country is required</div>
+                        </div>
+                        <div class="col-md-6">
+                          <label class="form-label fw-semibold">Address Type *</label>
+                          <select formControlName="type" class="form-select"
+                                  [class.is-invalid]="addressForm.get('type')?.invalid && addressForm.get('type')?.touched">
+                            <option value="SHIPPING">Shipping Address</option>
+                            <option value="BILLING">Billing Address</option>
+                            <option value="BOTH">Both Shipping & Billing</option>
+                          </select>
+                          <div class="invalid-feedback">Address type is required</div>
+                        </div>
+                      </div>
+
+                      <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary" [disabled]="isAddingAddress || addressForm.invalid">
+                          <span *ngIf="!isAddingAddress">{{ editingAddress ? 'Update Address' : 'Add Address' }}</span>
+                          <span *ngIf="isAddingAddress">
+                            <i class="bi bi-arrow-repeat spinner"></i>
+                            {{ editingAddress ? 'Updating...' : 'Adding...' }}
+                          </span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="cancelAddressForm()">Cancel</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Address List -->
+              <div *ngIf="!loadingAddresses && addresses.length > 0 && !showAddressForm" class="address-list">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h5 class="mb-0">Your Addresses ({{ addresses.length }})</h5>
+                  <button class="btn btn-primary" (click)="showAddAddressForm()">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Address
+                  </button>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12" *ngFor="let address of addresses">
+                    <div class="card border address-card">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-2">
+                              <h6 class="mb-0 me-3">{{ address.recipientName }}</h6>
+                              <span class="badge" [ngClass]="getAddressTypeBadgeClass(address.type)">
+                                {{ getAddressTypeDisplay(address.type) }}
+                              </span>
+                            </div>
+                            <p class="mb-1">{{ address.street }}</p>
+                            <p class="mb-1">{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                            <p class="mb-1">{{ address.country }}</p>
+                            <p class="mb-0 text-muted">
+                              <i class="bi bi-telephone me-1"></i>{{ address.phone }}
+                            </p>
+                          </div>
+                          <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm" (click)="editAddress(address)" title="Edit Address">
+                              <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" (click)="deleteAddress(address.id)" title="Delete Address">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <ng-template #noAddresses>
+                <div class="text-center py-5" *ngIf="!showAddressForm && !loadingAddresses">
+                  <i class="bi bi-geo-alt display-1 text-muted mb-3"></i>
+                  <h4 class="text-dark mb-3">No addresses saved</h4>
+                  <p class="text-muted mb-4">You haven't saved any addresses yet. Add your first address to make checkout easier.</p>
+                  <button class="btn btn-primary btn-lg" (click)="showAddAddressForm()">
+                    <i class="bi bi-plus-circle me-2"></i>Add Your First Address
+                  </button>
+                </div>
+              </ng-template>
+
+              <!-- Show empty state when no addresses -->
+              <div *ngIf="!loadingAddresses && addresses.length === 0 && !showAddressForm">
+                <ng-container *ngTemplateOutlet="noAddresses"></ng-container>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

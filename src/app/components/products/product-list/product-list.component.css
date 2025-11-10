@@ -1,0 +1,61 @@
+/* product-list.component.css */
+.product-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.card-img-top {
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.card-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  color: white;
+}
+
+.product-details {
+  display: flex;
+  justify-content: between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.stock {
+  font-size: 0.9rem;
+}
+
+.low-stock {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.btn-group .btn {
+  flex: 1;
+}

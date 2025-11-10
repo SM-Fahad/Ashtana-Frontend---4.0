@@ -1,0 +1,34 @@
+<div class="container">
+    <div class="card shadow-sm p-4 mt-4">
+    <div class="d-flex justify-content-between">
+        <h4 class="mb-3">Available Sizes</h4>
+        <button class="btn btn-dark mb-2" routerLink="/size-add">
+      <i class="bi bi-plus-circle"></i> Add Size
+    </button>
+    </div>
+
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Size Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let size of sizes">
+                <td>{{ size.id }}</td>
+                <td>{{ size.sizeName }}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-2" (click)="editSize(size.id!)">Edit</button>
+                    <button class="btn btn-sm btn-danger" (click)="deleteSize(size.id!)">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="selectedId">
+        <app-size-form [sizeId]="selectedId"></app-size-form>
+    </div>
+</div>
+</div>

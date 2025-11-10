@@ -1,0 +1,258 @@
+<!-- <div class="admin-container">
+  <h2>Admin Dashboard</h2>
+  <button class="btn btn-dark m-2" routerLink="/category-list"><i class="bi bi-plus-square"></i> Categories </button>
+  <button class="btn btn-dark m-2" routerLink="/sub-category-list"><i class="bi bi-plus-square"></i> Sub-Categories</button>
+  <button class="btn btn-dark m-2" routerLink="/color-list"><i class="bi bi-plus-square"></i> Colors </button>
+  <button class="btn btn-dark m-2" routerLink="/size-list"><i class="bi bi-plus-square"></i> Size </button>
+
+  <section>
+    <h3>Manage Products</h3>
+    
+
+    <div class="product-list">
+      <div class="product-card" *ngFor="let product of products">
+        <img *ngIf="product.imageUrl" [src]="product.imageUrl" alt="{{ product.name }}" />
+        <p><strong>{{ product.name }}</strong> - {{ product.price | currency }}</p>
+        <div class="d-flex justify-content-evenly">
+            <button (click)="deleteProduct(product.id)"><i class="bi bi-trash"></i>Delete</button>
+        <button (click)="editProduct(product)"><i class="bi bi-gear"></i> Edit Products</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <app-product-list></app-product-list>
+
+
+  <section>
+    <h3>Manage Orders</h3>
+
+    <button class="btn btn-dark m-2" (click)="clearAllOrders()" *ngIf="orders.length > 0">Clear All Orders</button>
+
+    <div *ngIf="orders.length === 0">
+      <p>No orders placed yet.</p>
+    </div>
+
+    <div class="order-card" *ngFor="let order of orders">
+      <h4>Order #{{ order.id }}</h4>
+      <p><strong>Date:</strong> {{ order.date }}</p>
+      <p><strong>Total:</strong> {{ order.total | currency }}</p>
+      <ul>
+        <li *ngFor="let item of order.items">{{ item.name }} - {{ item.price | currency }}</li>
+      </ul>
+      <button (click)="deleteOrder(order.id)"><i class="bi bi-trash"></i> Delete Order</button>
+    </div>
+  </section>
+
+   -->
+
+  <div class="admin-container">
+  <div class="admin-header">
+    <h2>Admin Dashboard</h2>
+    <div class="admin-actions">
+      <button class="btn btn-primary m-1" routerLink="/category-list">
+        <i class="bi bi-tags"></i> Categories
+      </button>
+      <button class="btn btn-primary m-1" routerLink="/sub-category-list">
+        <i class="bi bi-diagram-3"></i> Sub-Categories
+      </button>
+      <button class="btn btn-primary m-1" routerLink="/color-list">
+        <i class="bi bi-palette"></i> Colors
+      </button>
+      <button class="btn btn-primary m-1" routerLink="/size-list">
+        <i class="bi bi-aspect-ratio"></i> Sizes
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon revenue">
+          <i class="bi bi-currency-dollar"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalRevenue | currency }}</h3>
+          <p>Total Revenue</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon orders">
+          <i class="bi bi-cart-check"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalOrders }}</h3>
+          <p>Total Orders</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon products">
+          <i class="bi bi-box-seam"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ products.length }}</h3>
+          <p>Total Products</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon customers">
+          <i class="bi bi-people"></i>
+        </div>
+        <div class="stat-content">
+          <h3>1,284</h3>
+          <p>Customers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Products Section -->
+    <div class="col-lg-8">
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h3>Manage Products</h3>
+          <button class="btn btn-success btn-sm" routerLink="/product-list">
+            <i class="bi bi-plus-circle"></i> Add Product
+          </button>
+        </div>
+
+        <div class="product-grid">
+          <div class="product-card" *ngFor="let product of products">
+            <div class="product-image">
+              <img *ngIf="product.imageUrl" [src]="product.imageUrl" alt="{{ product.name }}" />
+              <div *ngIf="!product.imageUrl" class="no-image">
+                <i class="bi bi-image"></i>
+              </div>
+            </div>
+            <div class="product-info">
+              <h5>{{ product.name }}</h5>
+              <p class="product-price">{{ product.price | currency }}</p>
+              <div class="product-actions">
+                <button class="btn btn-outline-danger btn-sm" (click)="deleteProduct(product.id)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+                <button class="btn btn-outline-primary btn-sm" (click)="editProduct(product)">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product List Component -->
+        <app-product-list></app-product-list>
+      </div>
+
+      <!-- Orders Section -->
+      <div class="dashboard-section mt-4">
+        <div class="section-header">
+          <h3>Manage Orders</h3>
+          <button class="btn btn-danger btn-sm" (click)="clearAllOrders()" *ngIf="orders.length > 0">
+            <i class="bi bi-trash"></i> Clear All Orders
+          </button>
+        </div>
+
+        <div *ngIf="orders.length === 0" class="empty-state">
+          <i class="bi bi-cart-x"></i>
+          <p>No orders placed yet.</p>
+        </div>
+
+        <div class="orders-list">
+          <div class="order-card" *ngFor="let order of orders">
+            <div class="order-header">
+              <h5>Order #{{ order.id }}</h5>
+              <span class="order-date">{{ order.date }}</span>
+            </div>
+            <div class="order-details">
+              <p><strong>Total:</strong> {{ order.total | currency }}</p>
+              <ul class="order-items">
+                <li *ngFor="let item of order.items">
+                  {{ item.name }} - {{ item.price | currency }}
+                </li>
+              </ul>
+            </div>
+            <div class="order-actions">
+              <button class="btn btn-outline-danger btn-sm" (click)="deleteOrder(order.id)">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar with Charts and Quick Actions -->
+    <div class="col-lg-4">
+      <!-- Revenue Chart -->
+      <div class="dashboard-section">
+        <h4>Revenue Overview</h4>
+        <div class="chart-container">
+          <canvas #revenueChart width="400" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Quick Management -->
+      <div class="dashboard-section mt-4">
+        <h4>Quick Management</h4>
+        <div class="quick-actions">
+          <div class="action-item">
+            <i class="bi bi-tags"></i>
+            <span>Categories</span>
+            <button class="btn btn-outline-primary btn-sm" routerLink="/category-list">Manage</button>
+          </div>
+          <div class="action-item">
+            <i class="bi bi-palette"></i>
+            <span>Colors</span>
+            <button class="btn btn-outline-primary btn-sm" routerLink="/color-list">Manage</button>
+          </div>
+          <div class="action-item">
+            <i class="bi bi-aspect-ratio"></i>
+            <span>Sizes</span>
+            <button class="btn btn-outline-primary btn-sm" routerLink="/size-list">Manage</button>
+          </div>
+          <div class="action-item">
+            <i class="bi bi-diagram-3"></i>
+            <span>Sub-Categories</span>
+            <button class="btn btn-outline-primary btn-sm" routerLink="/sub-category-list">Manage</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="dashboard-section mt-4">
+        <h4>Recent Activity</h4>
+        <div class="activity-list">
+          <div class="activity-item">
+            <i class="bi bi-cart-check text-success"></i>
+            <div class="activity-content">
+              <p>New order received</p>
+              <small>2 minutes ago</small>
+            </div>
+          </div>
+          <div class="activity-item">
+            <i class="bi bi-person-plus text-primary"></i>
+            <div class="activity-content">
+              <p>New customer registered</p>
+              <small>1 hour ago</small>
+            </div>
+          </div>
+          <div class="activity-item">
+            <i class="bi bi-box-seam text-warning"></i>
+            <div class="activity-content">
+              <p>Product stock updated</p>
+              <small>3 hours ago</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

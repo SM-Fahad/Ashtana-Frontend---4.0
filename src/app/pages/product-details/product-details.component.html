@@ -1,0 +1,165 @@
+<!-- Loading State -->
+<div *ngIf="loading" class="text-center p-5">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="mt-2">Loading product...</p>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error" class="alert alert-danger text-center">
+  {{ error }}
+  <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadProduct()">Retry</button>
+</div>
+
+<!-- Product Content -->
+<div *ngIf="product && !loading" class="container product-container">
+  <div class="d-flex justify-content-between">
+    <a routerLink="/products" class="back">
+      <i class="bi bi-arrow-left-circle-fill"></i> Back to Products
+    </a>
+  </div>
+
+  <div class="row">
+    <!-- Product Image Gallery -->
+    <div class="col-md-6">
+      <div class="product-gallery">
+        <!-- Main Image -->
+        <div class="main-image text-center mb-3">
+          <img [src]="selectedImage" 
+               [alt]="product.name" 
+               class="product-image img-fluid" 
+               style="max-height: 500px; object-fit: contain;" />
+        </div>
+        
+        <!-- Thumbnail Images -->
+        <div *ngIf="hasMultipleImages()" class="thumbnail-container">
+          <div class="row g-2 justify-content-center">
+            <div *ngFor="let image of productImages" 
+                 class="col-auto">
+              <img [src]="image" 
+                   [alt]="product.name + ' thumbnail'"
+                   [class.active]="image === selectedImage"
+                   class="thumbnail img-thumbnail"
+                   (click)="selectImage(image)" />
+            </div>
+          </div>
+        </div>
+        
+        <!-- No images message -->
+        <div *ngIf="!hasMultipleImages() && productImages.length === 1" class="text-muted text-center">
+          <small>Only one image available</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="col-md-6">
+      <h3>{{ product.name }}</h3>
+      <div class="price">${{ product.price }}</div>
+      
+      <p class="text-muted">{{ product.description }}</p>
+
+      <!-- Color Selection -->
+      <div *ngIf="colors.length" class="mt-4">
+        <label class="form-label fw-bold">
+          My Color:
+          <span class="ms-2" [class.text-muted]="!selectedColor">
+            <span *ngIf="selectedColor" 
+                  [ngStyle]="{ 'background-color': selectedColor.colorCode }"
+                  style="display:inline-block;width:20px;height:20px;border-radius:50%;margin-right:8px;border:1px solid #ddd;"></span>
+            {{ selectedColor?.colorName || 'None' }}
+          </span>
+        </label>
+        <br />
+
+        <div class="color-options">
+          <span *ngFor="let color of colors" 
+                class="color-circle" 
+                [ngStyle]="{ 'background-color': color.colorCode }"
+                [style.border]="selectedColor?.colorName === color.colorName ? '3px solid #000' : '2px solid #ccc'"
+                (click)="selectColor(color)"
+                [title]="color.colorName"></span>
+        </div>
+      </div>
+
+      <!-- Size Selection -->
+      <div *ngIf="sizes.length" class="mt-4">
+        <label class="form-label fw-bold">
+          My Size:
+          <span class="ms-2" [class.text-muted]="!selectedSize">
+            {{ selectedSize?.sizeName || 'None' }}
+          </span>
+        </label>
+        <br />
+
+        <div class="size-options">
+          <button *ngFor="let size of sizes" 
+                  class="size-btn" 
+                  [class.active]="selectedSize?.sizeName === size.sizeName"
+                  (click)="selectSize(size)">
+            {{ size.sizeName }}
+          </button>
+        </div>
+      </div>
+
+      <!-- No colors/sizes message -->
+      <div *ngIf="!colors.length && !sizes.length" class="alert alert-warning mt-3">
+        <small>No colors or sizes available for this product.</small>
+      </div>
+
+      <!-- Add to Bag -->
+      <div class="mt-4">
+        <button (click)="addToCart()" class="btn btn-dark btn-lg w-100" [disabled]="!selectedColor || !selectedSize">
+          Add to My Bag
+        </button>
+      </div>
+
+      <!-- Product Details Accordion -->
+      <div class="accordion mt-4" id="productAccordion">
+        <!-- Product Details -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingDetails">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseDetails">
+              Product Details
+            </button>
+          </h2>
+          <div id="collapseDetails" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+            <div class="accordion-body">
+              {{ product.description || 'No description available.' }}
+              <div *ngIf="product.material" class="mt-2">
+                <strong>Material:</strong> {{ product.material }}
+              </div>
+              <div *ngIf="product.brand" class="mt-2">
+                <strong>Brand:</strong> {{ product.brand }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Size Guide -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingSizeChart">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#collapseSizeChart">
+              Size Guide/Chart
+            </button>
+          </h2>
+          <div id="collapseSizeChart" class="accordion-collapse collapse" data-bs-parent="#productAccordion">
+            <div class="accordion-body">
+              <ul class="list-unstyled row">
+                <li class="col-6">XS: Chest 30–32 in</li>
+                <li class="col-6">S: Chest 32–34 in</li>
+                <li class="col-6">M: Chest 34–36 in</li>
+                <li class="col-6">L: Chest 38–40 in</li>
+                <li class="col-6">XL: Chest 42–44 in</li>
+                <li class="col-6">XXL: Chest 46–48 in</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

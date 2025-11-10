@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="card shadow-sm p-4 mt-4">
+        <h4 class="mb-3">{{ isEditMode ? 'Edit Color' : 'Add New Color' }}</h4>
+        
+        <form [formGroup]="colorForm" (ngSubmit)="onSubmit()">
+            <!-- Color Name -->
+            <div class="mb-3">
+                <label class="form-label">Color Name</label>
+                <input type="text" class="form-control" formControlName="colorName"
+                    [class.is-invalid]="submitted && colorForm.controls['colorName'].invalid" />
+                <div class="invalid-feedback">Color name is required</div>
+            </div>
+
+            <!-- Color Code -->
+            <div class="mb-3">
+                <label class="form-label">Color Code</label>
+                <input type="text" class="form-control" placeholder="#FFFFFF" formControlName="colorCode"
+                    [class.is-invalid]="submitted && colorForm.controls['colorCode'].invalid" />
+                <div class="invalid-feedback">
+                    Please enter a valid hex color code (e.g. #000000)
+                </div>
+            </div>
+
+            <!-- Color Preview -->
+            <div class="rounded border mb-3" style="width: 60px; height: 30px;"
+                [style.backgroundColor]="colorForm.get('colorCode')?.value"></div>
+
+            <!-- Buttons -->
+            <button type="submit" class="btn btn-primary me-2" [disabled]="loading">
+                {{ isEditMode ? 'Update' : 'Create' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="colorForm.reset()">Reset</button>
+            
+            <!-- Status Message -->
+            <div *ngIf="message" class="alert alert-info mt-3">{{ message }}</div>
+            
+        </form>
+        <button type="button" class="btn btn-dark m-3" routerLink="/color-list">Colors List</button>
+    </div>
+
+</div>

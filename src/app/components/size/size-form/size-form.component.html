@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="card shadow-sm p-4 mt-4">
+        <h4 class="mb-3">{{ isEditMode ? 'Edit Size' : 'Add New Size' }}</h4>
+
+        <form [formGroup]="sizeForm" (ngSubmit)="onSubmit()">
+            <!-- Size Name -->
+            <div class="mb-3">
+                <label class="form-label">Size Name</label>
+                <input type="text" class="form-control" formControlName="sizeName"
+                    [class.is-invalid]="submitted && sizeForm.controls['sizeName'].invalid" />
+                <div class="invalid-feedback">Size name is required</div>
+            </div>
+
+            <!-- Buttons -->
+            <button type="submit" class="btn btn-primary me-2" [disabled]="loading">
+                {{ isEditMode ? 'Update' : 'Create' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="sizeForm.reset()">Reset</button>
+
+            <div *ngIf="message" class="alert alert-info mt-3">{{ message }}</div>
+        </form>
+        <button type="button" class="btn btn-dark mt-2" routerLink="/size-list">Size List</button>
+    </div>
+
+</div>

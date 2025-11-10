@@ -1,0 +1,192 @@
+/* .back {
+    text-decoration: none;
+    color: black;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.color-circle {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.size-btn {
+  padding: 8px 12px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+}
+
+.size-btn.active {
+  background-color: #000;
+  color: white;
+  border-color: #000;
+}   */
+
+/* .color-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 2px solid #ccc;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .size-btn {
+      border: 1px solid #adb5bd;
+      border-radius: 25px;
+      padding: 8px 16px;
+      margin: 5px;
+      cursor: pointer;
+      background-color: #fff;
+    }
+
+    .size-btn:hover, .size-btn.active {
+      background-color: #f1f1f1;
+    }
+
+    /* .product-image {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .product-container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 30px 15px;
+    }
+
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: black;
+    }
+
+
+    .accordion-button {
+      font-weight: 500;
+    } */
+
+.product-container {
+  padding: 20px 0;
+}
+
+.back {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.back:hover {
+  color: #000;
+}
+
+.product-image {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.thumbnail:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  opacity: 1;
+  border: 2px solid #007bff;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #e44d26;
+  margin: 10px 0;
+}
+
+.color-options {
+  margin-top: 10px;
+}
+
+.color-circle {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border: 2px solid #ccc;
+}
+
+.color-circle:hover {
+  transform: scale(1.1);
+}
+
+.size-options {
+  margin-top: 10px;
+}
+
+.size-btn {
+  padding: 8px 16px;
+  margin: 5px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.size-btn:hover {
+  background: #f8f9fa;
+}
+
+.size-btn.active {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .product-image {
+    max-height: 300px !important;
+  }
+  
+  .color-circle {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .size-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}

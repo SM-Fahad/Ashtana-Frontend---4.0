@@ -1,0 +1,12 @@
+<ng-container *ngIf="!hideLayout">
+  <app-navbar></app-navbar>
+  <app-navbar-bottom></app-navbar-bottom>
+</ng-container>
+
+<router-outlet></router-outlet>
+
+<ng-container *ngIf="!hideLayout">
+  <div style="margin: 20px 0 0 0">
+    <app-footer></app-footer>
+  </div>
+</ng-container>

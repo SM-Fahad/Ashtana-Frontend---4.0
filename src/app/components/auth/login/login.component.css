@@ -1,0 +1,47 @@
+/* Custom styles that Bootstrap doesn't cover */
+:host {
+  display: block;
+}
+
+/* Custom border radius for inputs */
+.form-control-lg.border-dark {
+  border-width: 1.5px;
+  border-radius: 8px;
+}
+
+/* Hover effect for the card */
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom button styling */
+.btn-dark {
+  background-color: #000000;
+  border-color: #000000;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-dark:hover:not(:disabled) {
+  background-color: #333333;
+  border-color: #333333;
+  transform: translateY(-1px);
+}
+
+.btn-dark:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+/* Custom link hover effect */
+.text-dark.fw-semibold.text-decoration-none:hover {
+  text-decoration: underline !important;
+}
+
+/* Ensure proper spacing */
+.min-vh-100 {
+  min-height: 100vh;
+}

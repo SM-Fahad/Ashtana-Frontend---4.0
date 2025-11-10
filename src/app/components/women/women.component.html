@@ -1,0 +1,15 @@
+<div class="container mt-2">
+  <div class="d-flex justify-content-between">
+    <h2>Product List</h2>
+    <button class="btn btn-sm btn-dark btn-lg w-25" routerLink="/add-product"><i class="bi bi-plus-square"></i> Add Products</button>
+  </div>
+<div class="product-container">
+  <div class="product-card" *ngFor="let product of products" (click)="viewProduct(product)">
+    <img [src]="product.imageUrls" alt="{{product.name}}" >
+    <h4>{{ product.name }}</h4>
+    <span>{{ product.description }}</span>
+    <p class="price">${{ product.price }}</p>
+    <button class="btn btn-dark rounded-5 w-100 d-block mx-auto">View Product</button>
+  </div>
+</div>
+</div>

@@ -1,0 +1,319 @@
+<div class="container">
+    <!-- product-form.component.html -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h2>{{ isEditMode ? 'Edit Product' : 'Create New Product' }}</h2>
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error && !loading" class="alert alert-danger">
+                    {{ error }}
+                </div>
+
+                <!-- Product Form -->
+                <form *ngIf="!loading" [formGroup]="productForm" (ngSubmit)="onSubmit()">
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-8">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Basic Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Product Name *</label>
+                                                <input type="text" class="form-control" id="name" formControlName="name"
+                                                    [class.is-invalid]="f['name'].touched && f['name'].invalid">
+                                                <div *ngIf="f['name'].touched && f['name'].invalid"
+                                                    class="invalid-feedback">
+                                                    <div *ngIf="f['name'].errors?.['required']">Product name is required
+                                                    </div>
+                                                    <div *ngIf="f['name'].errors?.['minlength']">Product name must be at
+                                                        least 2 characters</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="sku" class="form-label">SKU</label>
+                                                <input type="text" class="form-control" id="sku" formControlName="sku">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" formControlName="description"
+                                            rows="4"
+                                            [class.is-invalid]="f['description'].touched && f['description'].invalid"></textarea>
+                                        <div class="form-text">
+                                            {{ f['description'].value?.length || 0 }}/1000 characters
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="price" class="form-label">Price *</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">$</span>
+                                                    <input type="number" class="form-control" id="price"
+                                                        formControlName="price" step="0.01" min="0"
+                                                        [class.is-invalid]="f['price'].touched && f['price'].invalid">
+                                                </div>
+                                                <div *ngIf="f['price'].touched && f['price'].invalid"
+                                                    class="invalid-feedback">
+                                                    Valid price is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="stock" class="form-label">Stock Quantity *</label>
+                                                <input type="number" class="form-control" id="stock"
+                                                    formControlName="stock" min="0"
+                                                    [class.is-invalid]="f['stock'].touched && f['stock'].invalid">
+                                                <div *ngIf="f['stock'].touched && f['stock'].invalid"
+                                                    class="invalid-feedback">
+                                                    Stock quantity is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Categories & Relationships -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Categories & Attributes</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="categoryId" class="form-label">Category *</label>
+                                                <select class="form-select" id="categoryId" formControlName="categoryId"
+                                                    [class.is-invalid]="f['categoryId'].touched && f['categoryId'].invalid">
+                                                    <option value="">Select Category</option>
+                                                    <option *ngFor="let category of categories" [value]="category.id">
+                                                        {{ category.name }}
+                                                    </option>
+                                                </select>
+                                                <div *ngIf="f['categoryId'].touched && f['categoryId'].invalid"
+                                                    class="invalid-feedback">
+                                                    Category is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="subCategoryId" class="form-label">Sub Category</label>
+                                                <select class="form-select" id="subCategoryId"
+                                                    formControlName="subCategoryId"
+                                                    [class.is-invalid]="f['subCategoryId'].touched && f['subCategoryId'].invalid">
+                                                    <option value="">Select Sub Category</option>
+                                                    <!-- FIX: Use subCategory (singular) instead of subCategories (plural) -->
+                                                    <option *ngFor="let subCategory of subCategories"
+                                                        [value]="subCategory.id">
+                                                        {{ subCategory.name }}
+                                                    </option>
+                                                </select>
+                                                <!-- Optional: Add validation message -->
+                                                <div *ngIf="f['subCategoryId'].touched && f['subCategoryId'].invalid"
+                                                    class="invalid-feedback">
+                                                    Please select a valid sub category
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Sizes</label>
+                                                <div class="form-control" style="height: auto; min-height: 38px;">
+                                                    <div *ngFor="let size of sizes"
+                                                        class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            [id]="'size-' + size.id" [value]="size.id"
+                                                            (change)="onSizeChange($event, size.id!)">
+                                                        <label class="form-check-label" [for]="'size-' + size.id">
+                                                            {{ size.sizeName }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Colors</label>
+                                                <div class="form-control" style="height: auto; min-height: 38px;">
+                                                    <div *ngFor="let color of colors"
+                                                        class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            [id]="'color-' + color.id" [value]="color.id"
+                                                            (change)="onColorChange($event, color.id!)">
+                                                        <label class="form-check-label" [for]="'color-' + color.id">
+                                                            {{ color.colorName }}
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="col-md-4">
+                            <!-- Images -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Product Images</h5>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Existing Images -->
+                                    <div *ngIf="existingImages.length > 0" class="mb-3">
+                                        <h6>Existing Images</h6>
+                                        <div class="row g-2">
+                                            <div *ngFor="let image of existingImages; let i = index" class="col-6">
+                                                <div class="image-thumbnail position-relative">
+                                                    <img [src]="image" class="img-thumbnail">
+                                                    <div class="thumbnail-actions">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                            (click)="removeExistingImage(image)">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                            (click)="setPrimaryImage(image)">
+                                                            <i class="fas fa-star"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- New Image Upload -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload New Images</label>
+                                        <input type="file" class="form-control" (change)="onFileSelected($event)"
+                                            multiple accept="image/*">
+                                        <div class="form-text">Select multiple images (JPEG, PNG, GIF, WebP)</div>
+                                    </div>
+
+                                    <!-- Image Previews -->
+                                    <div *ngIf="imagePreviews.length > 0" class="mt-3">
+                                        <h6>New Images</h6>
+                                        <div class="row g-2">
+                                            <div *ngFor="let preview of imagePreviews; let i = index" class="col-6">
+                                                <div class="image-thumbnail position-relative">
+                                                    <img [src]="preview" class="img-thumbnail">
+                                                    <button type="button"
+                                                        class="btn btn-sm btn-danger position-absolute top-0 end-0"
+                                                        (click)="removeSelectedImage(i)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Additional Information</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="weight" class="form-label">Weight (kg)</label>
+                                        <input type="number" class="form-control" id="weight" formControlName="weight"
+                                            step="0.01" min="0">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="dimensions" class="form-label">Dimensions</label>
+                                        <input type="text" class="form-control" id="dimensions"
+                                            formControlName="dimensions" placeholder="L x W x H">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="material" class="form-label">Material</label>
+                                        <input type="text" class="form-control" id="material"
+                                            formControlName="material">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="brand" class="form-label">Brand</label>
+                                        <input type="text" class="form-control" id="brand" formControlName="brand">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Settings -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="status" class="form-label">Status</label>
+                                        <select class="form-select" id="status" formControlName="status">
+                                            <option value="ACTIVE">Active</option>
+                                            <option value="INACTIVE">Inactive</option>
+                                            <option value="PENDING">Pending</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="isFeatured"
+                                            formControlName="isFeatured">
+                                        <label class="form-check-label" for="isFeatured">
+                                            Featured Product
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="isBestSeller"
+                                            formControlName="isBestSeller">
+                                        <label class="form-check-label" for="isBestSeller">
+                                            Best Seller
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <button type="submit" class="btn btn-primary w-100 mb-2"
+                                        [disabled]="submitting || productForm.invalid">
+                                        <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+                                        {{ isEditMode ? 'Update Product' : 'Create Product' }}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary w-100"
+                                        [routerLink]="['/products']">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

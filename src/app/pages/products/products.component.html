@@ -1,0 +1,125 @@
+<div class="container py-4">
+  <!-- Header with Sorting & Filter -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <h2 class="h3 fw-bold text-dark mb-1">Our Collection</h2>
+          <p class="text-muted mb-0">{{ products.length }} products available</p>
+        </div>
+        
+        <div class="d-flex gap-2 flex-wrap">
+          <!-- Sort Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-sort-down me-1"></i>Sort
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Newest First</a></li>
+              <li><a class="dropdown-item" href="#">Price: Low to High</a></li>
+              <li><a class="dropdown-item" href="#">Price: High to Low</a></li>
+              <li><a class="dropdown-item" href="#">Most Popular</a></li>
+            </ul>
+          </div>
+          
+          <!-- Filter Dropdown -->
+          <div class="dropdown">
+            <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-funnel me-1"></i>Filter
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">All Categories</a></li>
+              <li><a class="dropdown-item" href="#">Men's Fashion</a></li>
+              <li><a class="dropdown-item" href="#">Women's Fashion</a></li>
+              <li><a class="dropdown-item" href="#">Accessories</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="product-container">
+    <div class="product-card" *ngFor="let product of products">
+      <!-- Image with Favorite Button -->
+      <div class="product-image-container">
+        <img [src]="getPrimaryImage(product)" alt="{{product.name}}" class="product-image">
+        
+        <!-- Favorite Heart Icon -->
+        <button class="favorite-btn" 
+                (click)="$event.stopPropagation(); toggleFavorite(product)"
+                [class.favorited]="isProductFavorited(product)"
+                title="Add to favorites">
+          <i class="bi" [class.bi-heart-fill]="isProductFavorited(product)" [class.bi-heart]="!isProductFavorited(product)"></i>
+        </button>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <h4 class="product-name">{{ product.name }}</h4>
+        <p class="product-description">{{ product.description }}</p>
+        <div class="product-price">${{ product.price }}</div>
+        
+        <!-- Size Selection - Smaller Chips -->
+        <div class="variant-section" *ngIf="product.availableSizes">
+          <div class="variant-options">
+            <button *ngFor="let size of getAvailableSizes(product)"
+                    class="variant-chip"
+                    [class.active]="getSelectedSize(product) === size"
+                    (click)="$event.stopPropagation(); selectSize(product, size)">
+              {{ size }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Color Selection - Smaller Chips -->
+        <div class="variant-section" *ngIf="product.availableColors">
+          <div class="variant-options">
+            <button *ngFor="let color of getAvailableColors(product)"
+                    class="variant-chip"
+                    [class.active]="getSelectedColor(product) === color"
+                    (click)="$event.stopPropagation(); selectColor(product, color)">
+              {{ color }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Selected Variants Summary -->
+        <div class="selected-summary" *ngIf="getSelectedSize(product) || getSelectedColor(product)">
+          <small class="text-muted">
+            <i class="bi bi-check-circle me-1"></i>
+            <span *ngIf="getSelectedSize(product)">{{ getSelectedSize(product) }}</span>
+            <span *ngIf="getSelectedSize(product) && getSelectedColor(product)"> • </span>
+            <span *ngIf="getSelectedColor(product)">{{ getSelectedColor(product) }}</span>
+          </small>
+        </div>
+
+        <!-- Action Buttons - Icon only for bag -->
+        <div class="product-actions">
+          <button class="btn btn-dark btn-sm view-btn" (click)="$event.stopPropagation(); viewProduct(product)">
+            View Product
+          </button>
+          
+          <!-- Add to Bag Button - Icon only -->
+          <button class="btn btn-outline-dark btn-sm cart-btn" 
+                  (click)="$event.stopPropagation(); addToCart(product)"
+                  [disabled]="!canAddToBag(product)"
+                  [class.btn-dark]="canAddToBag(product)"
+                  [class.btn-outline-dark]="!canAddToBag(product)"
+                  title="Add to Bag">
+            <i class="bi bi-bag"></i>
+          </button>
+        </div>
+
+        <!-- Quick Add Feedback -->
+        <div class="add-feedback" *ngIf="getRecentlyAddedProductId() === product.id">
+          <small class="text-success">
+            <i class="bi bi-check-circle-fill me-1"></i>
+            Added to bag!
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

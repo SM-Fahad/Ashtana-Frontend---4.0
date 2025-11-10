@@ -1,0 +1,77 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light py-4">
+  <div class="card border-0 shadow-lg rounded-3" style="max-width: 400px; width: 100%;">
+    <div class="card-body p-4">
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <h2 class="h3 fw-bold text-dark mb-2">Welcome to Ashtana</h2>
+        <p class="text-muted mb-0">Sign in to your account</p>
+      </div>
+
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Username -->
+        <div class="mb-3">
+          <label for="username" class="form-label small fw-semibold text-uppercase text-dark mb-2">
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            class="form-control form-control-lg border-dark"
+            [class.is-invalid]="username?.invalid && username?.touched"
+            placeholder="Enter your username">
+          <div class="invalid-feedback" *ngIf="username?.invalid && username?.touched">
+            <div *ngIf="username?.errors?.['required']">Username is required</div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4">
+          <label for="password" class="form-label small fw-semibold text-uppercase text-dark mb-2">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control form-control-lg border-dark"
+            [class.is-invalid]="password?.invalid && password?.touched"
+            placeholder="Enter your password">
+          <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+            <div *ngIf="password?.errors?.['required']">Password is required</div>
+            <div *ngIf="password?.errors?.['minlength']">
+              Password must be at least 6 characters
+            </div>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="alert alert-danger d-flex align-items-center" *ngIf="errorMessage">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ errorMessage }}
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-dark btn-lg w-100 py-2 fw-semibold"
+          [disabled]="isLoading">
+          <span *ngIf="!isLoading">Sign In</span>
+          <span *ngIf="isLoading">
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Signing In...
+          </span>
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="text-center mt-4 pt-3 border-top">
+        <p class="text-muted mb-0">
+          Don't have an account? 
+          <a routerLink="/signup" class="text-dark fw-semibold text-decoration-none">Sign up</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,184 @@
+<div class="orders-page">
+  <div class="container">
+    <!-- Header -->
+    <div class="orders-header">
+      <div class="header-content">
+        <a routerLink="/products" class="back-link">
+          <i class="bi bi-arrow-left"></i> Back to Shopping
+        </a>
+        <h1>Your Orders</h1>
+        <p class="subtitle">Track and manage your orders</p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredOrders.length === 0" class="empty-state">
+      <div class="empty-icon">
+        <i class="bi bi-receipt"></i>
+      </div>
+      <h2>No Orders Yet</h2>
+      <p>You haven't placed any orders. Start shopping to see your orders here.</p>
+      <button class="btn btn-primary" routerLink="/products">
+        <i class="bi bi-bag"></i> Start Shopping
+      </button>
+    </div>
+
+    <!-- Orders Content -->
+    <div *ngIf="!isLoading && filteredOrders.length > 0" class="orders-content">
+      <!-- Filters and Search -->
+      <div class="orders-toolbar">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            (input)="onSearchChange()"
+            placeholder="Search orders..." 
+            class="search-input">
+        </div>
+        
+        <div class="filter-group">
+          <label>Filter by status:</label>
+          <select [(ngModel)]="selectedStatus" (change)="onStatusChange()" class="status-filter">
+            <option *ngFor="let filter of statusFilters" [value]="filter.value">
+              {{ filter.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Orders Count -->
+      <div class="orders-count">
+        <span class="count">{{ filteredOrders.length }}</span>
+        <span *ngIf="selectedStatus === 'all'">order(s) found</span>
+        <span *ngIf="selectedStatus !== 'all'">{{ selectedStatus }} order(s)</span>
+      </div>
+
+      <!-- Orders List -->
+      <div class="orders-list">
+        <div *ngFor="let order of filteredOrders" class="order-card">
+          <!-- Order Header -->
+          <div class="order-header">
+            <div class="order-info">
+              <h3 class="order-id">Order #{{ order.id }}</h3>
+              <div class="order-meta">
+                <span class="order-date">
+                  <i class="bi bi-calendar"></i>
+                  {{ formatDate(order.date) }}
+                </span>
+                <span class="order-items">
+                  <i class="bi bi-box"></i>
+                  {{ getTotalItems(order) }} item(s)
+                </span>
+              </div>
+            </div>
+            <div class="order-status">
+              <span [class]="'status-badge ' + getStatusBadgeClass(order.status || 'confirmed')">
+                <i [class]="getStatusIcon(order.status || 'confirmed')"></i>
+                {{ (order.status || 'confirmed') | titlecase }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Order Details -->
+          <div class="order-details">
+            <div class="order-items-preview">
+              <div class="items-grid">
+                <div *ngFor="let item of order.items.slice(0, 3)" class="order-item">
+                  <img [src]="item.imageUrl" [alt]="item.name" class="item-image">
+                  <div class="item-info">
+                    <h4 class="item-name">{{ item.name }}</h4>
+                    <p class="item-variants" *ngIf="item.selectedColor || item.selectedSize">
+                      {{ item.selectedColor }} {{ item.selectedSize ? '• Size: ' + item.selectedSize : '' }}
+                    </p>
+                    <p class="item-quantity">Qty: {{ item.quantity }}</p>
+                  </div>
+                  <div class="item-price">{{ (item.price * item.quantity) | currency }}</div>
+                </div>
+              </div>
+              
+              <!-- Show more items indicator -->
+              <div *ngIf="order.items.length > 3" class="more-items">
+                +{{ order.items.length - 3 }} more items
+              </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <span>{{ order.subtotal | currency }}</span>
+              </div>
+              <div class="summary-row">
+                <span>Shipping</span>
+                <span [class.free-shipping]="order.shipping === 0">
+                  {{ order.shipping === 0 ? 'FREE' : (order.shipping | currency) }}
+                </span>
+              </div>
+              <div class="summary-row">
+                <span>Taxes</span>
+                <span>{{ (order.gst + order.pst) | currency }}</span>
+              </div>
+              <div *ngIf="order.discount > 0" class="summary-row discount">
+                <span>Discount</span>
+                <span>-{{ order.discount | currency }}</span>
+              </div>
+              <div class="summary-row total">
+                <span><strong>Total</strong></span>
+                <span><strong>{{ order.total | currency }}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer & Payment Info -->
+          <div class="order-footer">
+            <div class="customer-info">
+              <h4>Shipping To</h4>
+              <p class="customer-name">{{ order.customer.firstName }} {{ order.customer.lastName }}</p>
+              <p class="customer-address">
+                {{ order.customer.address }}, {{ order.customer.city }}, 
+                {{ order.customer.province }} {{ order.customer.postalCode }}
+              </p>
+              <p class="customer-contact">
+                {{ order.customer.email }} • {{ order.customer.phone }}
+              </p>
+            </div>
+            
+            <div class="payment-info">
+              <h4>Payment Method</h4>
+              <div class="payment-method">
+                <i [class]="getPaymentMethodIcon(order.paymentMethod || 'card')"></i>
+                <span>{{ (order.paymentMethod || 'card') | uppercase }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="order-actions">
+            <button class="btn btn-outline" (click)="trackOrder(order)">
+              <i class="bi bi-truck"></i> Track Order
+            </button>
+            <button class="btn btn-outline" (click)="reorder(order)">
+              <i class="bi bi-arrow-repeat"></i> Reorder
+            </button>
+            <button class="btn btn-primary" 
+                    (click)="downloadInvoice(order)" 
+                    [disabled]="isGeneratingInvoice[order.id]">
+              <i class="bi bi-receipt"></i> 
+              {{ isGeneratingInvoice[order.id] ? 'Generating...' : 'Download Invoice' }}
+            </button>
+            <button class="btn btn-danger" (click)="deleteOrder(order.id)">
+              <i class="bi bi-trash"></i> Delete Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

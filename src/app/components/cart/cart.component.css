@@ -1,0 +1,30 @@
+/* Only custom styles that Bootstrap doesn't cover */
+.sticky-top {
+  position: sticky;
+  z-index: 1020;
+}
+
+/* Ensure proper spacing for fixed navbar */
+.container-fluid {
+  padding-top: 80px;
+}
+
+/* Custom image sizing */
+img.rounded {
+  object-fit: cover;
+}
+
+/* Smooth transitions for hover effects */
+.card {
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Custom button group styling */
+.btn-group-sm > .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}

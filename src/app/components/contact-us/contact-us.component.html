@@ -1,0 +1,90 @@
+<div class="container mt-5 mb-5">
+    <div class="row">
+    <div class="col-md-6 px-5" style="text-align: center; padding-left: 50px;">
+        <h2 class="text-center mb-4">Contact Us</h2>
+        <p><img src="assets/Ashtana-preview.png" alt=""></p>
+        <p class="text-center mb-4">Fill out the form to Send your Quiries. Our team will contact you as soon as possible</p>
+        <h3>Contact Information</h3>
+        <ul style="list-style: none;">
+            <li><b>Email:</b> info@ashtana.com</li>
+            <li><b>Phone:</b> +1-234-567-890</li>
+            <li><b>Mailing Address:</b> 123 Fashion Street, Surrey, BC, Canada</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+    <!-- Name -->
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input
+        type="text"
+        id="name"
+        class="form-control"
+        formControlName="name"
+        [class.is-invalid]="submitted && contactForm.get('name')?.invalid"
+      />
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('name')?.hasError('required')">
+        Name is required.
+      </div>
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('name')?.hasError('minlength')">
+        Name must be at least 2 characters.
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        id="email"
+        class="form-control"
+        formControlName="email"
+        [class.is-invalid]="submitted && contactForm.get('email')?.invalid"
+      />
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('email')?.hasError('required')">
+        Email is required.
+      </div>
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('email')?.hasError('email')">
+        Enter a valid email.
+      </div>
+    </div>
+
+    <!-- Subject -->
+    <div class="mb-3">
+      <label for="subject" class="form-label">Subject</label>
+      <input
+        type="text"
+        id="subject"
+        class="form-control"
+        formControlName="subject"
+        [class.is-invalid]="submitted && contactForm.get('subject')?.invalid"
+      />
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('subject')?.hasError('required')">
+        Subject is required.
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div class="mb-4">
+      <label for="message" class="form-label">Message</label>
+      <textarea
+        id="message"
+        rows="4"
+        class="form-control"
+        formControlName="message"
+        [class.is-invalid]="submitted && contactForm.get('message')?.invalid"
+      ></textarea>
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('message')?.hasError('required')">
+        Message is required.
+      </div>
+      <div class="invalid-feedback" *ngIf="submitted && contactForm.get('message')?.hasError('minlength')">
+        Message must be at least 10 characters.
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-dark w-100">Send Message</button>
+  </form>
+</div>
+</div>
+</div>

@@ -1,0 +1,154 @@
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
+  <div class="card border-0 shadow-sm rounded-3 mx-3" style="max-width: 440px; width: 100%;">
+    <div class="card-body p-4 p-md-5">
+      
+      <!-- Header with proper spacing -->
+      <div class="text-center mb-4">
+        <h2 class="h4 fw-bold text-dark mb-2">Join Ashtana</h2>
+        <p class="text-muted mb-0">Create your account</p>
+      </div>
+
+      <!-- Signup Form -->
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Name Row -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="userFirstName" class="form-label small fw-semibold text-dark mb-2">
+              First Name
+            </label>
+            <input
+              type="text"
+              id="userFirstName"
+              formControlName="userFirstName"
+              class="form-control"
+              [class.is-invalid]="userFirstName?.invalid && userFirstName?.touched"
+              placeholder="Enter first name">
+            <div class="invalid-feedback" *ngIf="userFirstName?.invalid && userFirstName?.touched">
+              First name is required
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="userLastName" class="form-label small fw-semibold text-dark mb-2">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="userLastName"
+              formControlName="userLastName"
+              class="form-control"
+              [class.is-invalid]="userLastName?.invalid && userLastName?.touched"
+              placeholder="Enter last name">
+            <div class="invalid-feedback" *ngIf="userLastName?.invalid && userLastName?.touched">
+              Last name is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div class="mb-3">
+          <label for="userName" class="form-label small fw-semibold text-dark mb-2">
+            Username
+          </label>
+          <input
+            type="text"
+            id="userName"
+            formControlName="userName"
+            class="form-control"
+            [class.is-invalid]="userName?.invalid && userName?.touched"
+            placeholder="Choose username">
+          <div class="invalid-feedback" *ngIf="userName?.invalid && userName?.touched">
+            <div *ngIf="userName?.errors?.['required']">Username is required</div>
+            <div *ngIf="userName?.errors?.['minlength']">Username must be at least 3 characters</div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label small fw-semibold text-dark mb-2">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-control"
+            [class.is-invalid]="email?.invalid && email?.touched"
+            placeholder="Enter your email">
+          <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+            <div *ngIf="email?.errors?.['required']">Email is required</div>
+            <div *ngIf="email?.errors?.['email']">Please enter valid email</div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label for="password" class="form-label small fw-semibold text-dark mb-2">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control"
+            [class.is-invalid]="password?.invalid && password?.touched"
+            placeholder="Create password">
+          <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+            <div *ngIf="password?.errors?.['required']">Password is required</div>
+            <div *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</div>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mb-4">
+          <label for="confirmPassword" class="form-label small fw-semibold text-dark mb-2">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="form-control"
+            [class.is-invalid]="confirmPassword?.invalid && confirmPassword?.touched"
+            placeholder="Confirm password">
+          <div class="invalid-feedback" *ngIf="confirmPassword?.invalid && confirmPassword?.touched">
+            <div *ngIf="confirmPassword?.errors?.['required']">Please confirm password</div>
+            <div *ngIf="confirmPassword?.errors?.['passwordMismatch']">Passwords do not match</div>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="alert alert-danger d-flex align-items-center mb-3" *ngIf="errorMessage">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ errorMessage }}
+        </div>
+
+        <div class="alert alert-success d-flex align-items-center mb-3" *ngIf="successMessage">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ successMessage }}
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-dark w-100 py-2 fw-semibold mb-3"
+          [disabled]="isLoading">
+          <span *ngIf="!isLoading">Create Account</span>
+          <span *ngIf="isLoading">
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Creating Account...
+          </span>
+        </button>
+
+      </form>
+
+      <!-- Footer -->
+      <div class="text-center pt-3 border-top">
+        <p class="text-muted mb-0">
+          Already have an account? 
+          <a routerLink="/login" class="text-dark fw-semibold text-decoration-none">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

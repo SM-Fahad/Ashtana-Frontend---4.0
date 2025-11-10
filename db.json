@@ -1,0 +1,68 @@
+{
+  "products": [
+    {
+      "name": "Ladies Long Dress",
+      "description": "Ladies Long Dress Summer Collection",
+      "category": "female",
+      "price": 50,
+      "imageUrl": "assets/Dress/Long jama 01.png",
+      "id": "1"
+    },
+    {
+      "name": "Ladies Long Dress",
+      "description": "Ladies Long Dress Summer Collection",
+      "price": 300,
+      "category": "female",
+      "imageUrl": "assets/Dress/Long jama 02.png",
+      "id": "2"
+    },
+    {
+      "name": "Ladies Long Dress",
+      "description": "Ladies Long Dress Summer Collection",
+      "category": "female",
+      "price": 20,
+      "imageUrl": "assets/Dress/Long jama 03.png",
+      "id": "3"
+    },
+    {
+      "name": "Ladies Long Dress",
+      "description": "Ladies Long Dress Summer Collection",
+      "price": 500,
+      "category": "female",
+      "imageUrl": "assets/Dress/Long jama 04.png",
+      "id": "4"
+    },
+    {
+      "name": "Ladies Long Dress",
+      "description": "Ladies Long Dress Summer Collection",
+      "price": 600,
+      "category": "female",
+      "imageUrl": "assets/Dress/Long jama 05.png",
+      "id": "5"
+    },
+    {
+      "name": "Ladies Long Dress",
+      "description": "Ladies Long Dress Summer Collection",
+      "price": 700,
+      "category": "female",
+      "imageUrl": "assets/Dress/Long jama 06.png",
+      "id": "6"
+    },
+    {
+      "name": "Crop Top",
+      "description": "Ladies Crop Top Summer Collection",
+      "price": 40,
+      "category": "female",
+      "imageUrl": "assets/Dress/Top 04.png",
+      "id": "7"
+    },
+    {
+      "name": "TOp",
+      "description": "TOp",
+      "category": "female",
+      "price": 40,
+      "imageUrl": "assets/Dress/Top 08.png",
+      "id": "3a65"
+    }
+  ]
+}

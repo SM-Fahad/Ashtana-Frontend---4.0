@@ -1,0 +1,111 @@
+<!-- product-list.component.html -->
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Product Management</h2>
+    <button routerLink="/product/add" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Add New Product
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    {{ error }}
+    <button (click)="loadProducts()" class="btn btn-sm btn-outline-danger ms-2">Retry</button>
+  </div>
+
+  <!-- Products Grid -->
+  <div *ngIf="!loading && !error" class="row">
+    <div *ngFor="let product of products" class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 product-card">
+        <div class="card-img-top-container">
+          <img 
+            [src]="getPrimaryImage(product)" 
+            [alt]="product.name"
+            class="card-img-top"
+            (error)="handleImageError(product)"
+          >
+          <div class="card-badge" [class.bg-success]="product.status === 'ACTIVE'" 
+                                [class.bg-warning]="product.status === 'PENDING'"
+                                [class.bg-danger]="product.status === 'INACTIVE'">
+            {{ product.status }}
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <h5 class="card-title">{{ product.name }}</h5>
+          <p class="card-text text-muted small">
+            {{ (product.description || '')  }}{{ product.description && product.description.length > 100 ? '...' : '' }}
+          </p>
+          
+          <div class="product-details">
+            <div class="price">${{ product.price }}</div>
+            <div class="stock" [class.low-stock]="product.stock < 10">
+              Stock: {{ product.stock }}
+            </div>
+          </div>
+
+          <!-- Sizes & Colors -->
+          <div *ngIf="getAvailableSizes(product).length > 0 || getAvailableColors(product).length > 0" class="mt-2">
+            <div *ngIf="getAvailableSizes(product).length > 0" class="mb-1">
+              <small class="text-muted">Sizes: </small>
+              <span class="badge bg-light text-dark me-1" *ngFor="let size of getAvailableSizes(product)">
+                {{ size }}
+              </span>
+            </div>
+            <div *ngIf="getAvailableColors(product).length > 0" class="mb-1">
+              <small class="text-muted">Colors: </small>
+              <span class="badge bg-light text-dark me-1" *ngFor="let color of getAvailableColors(product)">
+                {{ color }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Additional Info -->
+          <div *ngIf="product.sku" class="mt-2">
+            <small class="text-muted">SKU: {{ product.sku }}</small>
+          </div>
+
+          <!-- Featured & Best Seller Badges -->
+          <div class="mt-2">
+            <span *ngIf="product.isFeatured" class="badge bg-warning me-1">Featured</span>
+            <span *ngIf="product.isBestSeller" class="badge bg-info">Best Seller</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="btn-group w-100">
+            <button 
+              [routerLink]="['/products/edit', product.id]" 
+              class="btn btn-outline-primary btn-sm"
+            >
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button 
+              (click)="deleteProduct(product.id!)" 
+              class="btn btn-outline-danger btn-sm"
+            >
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && products.length === 0" class="text-center py-5">
+    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+    <h4>No Products Found</h4>
+    <p class="text-muted">Get started by creating your first product.</p>
+    <button routerLink="/products/create" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Create Product
+    </button>
+  </div>
+</div>

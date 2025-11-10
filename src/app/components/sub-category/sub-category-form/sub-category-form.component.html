@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <h4 class="mb-3">{{ subCategory.id ? 'Edit' : 'Add' }} SubCategory</h4>
+
+  <form (ngSubmit)="saveSubCategory()">
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input type="text" [(ngModel)]="subCategory.name" name="name" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea [(ngModel)]="subCategory.description" name="description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Category</label>
+      <select [(ngModel)]="subCategory.categoryId" name="categoryId" class="form-select" required>
+        <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Image URL</label>
+      <input type="text" [(ngModel)]="subCategory.subCategoryImg" name="subCategoryImg" class="form-control">
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ subCategory.id ? 'Update' : 'Create' }}</button>
+  </form>
+  <button type="button" class="btn btn-dark mt-2" routerLink="/sub-category-list">Back to Sub Category List</button>
+</div>
