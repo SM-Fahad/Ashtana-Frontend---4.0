@@ -197,7 +197,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductResponseDTO } from 'src/app/models/products';
-import { CartService } from 'src/app/services/cart.service';
+
 import { ProductService } from 'src/app/services/product.service';
 import { ColorService } from 'src/app/services/color.service';
 import { SizeService } from 'src/app/services/size.service';
@@ -227,7 +227,7 @@ export class ProductDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private productService: ProductService,
     private router: Router,
-    private cartService: CartService,
+    // private cartService: CartService,
     private colorService: ColorService,
     private sizeService: SizeService
   ) {}
@@ -387,7 +387,7 @@ export class ProductDetailsComponent implements OnInit {
       quantity: 1
     };
 
-    this.cartService.addToCart(cartItem);
+    // this.cartService.addToCart(cartItem);
 
     // SweetAlert success message
     Swal.fire({

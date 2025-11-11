@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductResponseDTO } from 'src/app/models/products';
 import { ProductService } from 'src/app/services/product.service';
-import { CartService } from 'src/app/services/cart.service'; // Add this import
+
 
 interface ProductSelection {
   selectedSize?: string;
@@ -23,7 +23,7 @@ export class ProductsComponent implements OnInit {
   constructor(
     private productService: ProductService, 
     private router: Router,
-    private cartService: CartService // Inject cart service
+    // private cartService: CartService // Inject cart service
   ) { }
 
   ngOnInit(): void {
@@ -176,7 +176,7 @@ export class ProductsComponent implements OnInit {
     console.log('Adding to cart:', cartItem);
     
     // Actually add to cart using the cart service
-    this.cartService.addToCart(cartItem);
+    // this.cartService.addToCart(cartItem);
     
     // Show success feedback
     this.showAddToCartFeedback(product.id);

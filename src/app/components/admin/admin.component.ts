@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { ProductResponseDTO } from 'src/app/models/products';
-import { CartService } from 'src/app/services/cart.service';
+// import { CartService } from 'src/app/services/cart.service';
 import { ProductService } from 'src/app/services/product.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class AdminComponent implements OnInit {
   };
 
   constructor(private http: HttpClient, 
-    private cartService: CartService, 
+    // private cartService: CartService, 
     private router: Router,
     private productService: ProductService,
   ) {}
@@ -58,12 +58,12 @@ export class AdminComponent implements OnInit {
   }
 
   loadOrders() {
-    this.orders = this.cartService.getOrders();
+    // this.orders = this.cartService.getOrders();
   }
 
   deleteOrder(id: number) {
     if (confirm('Delete this order?')) {
-      this.cartService.deleteOrder(id);
+      // this.cartService.deleteOrder(id);
       this.loadOrders();
     }
   }

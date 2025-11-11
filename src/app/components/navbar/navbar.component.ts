@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { CartService } from '../../services/cart.service';
+
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -21,7 +21,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private cartService: CartService
+    // private cartService: CartService
   ) {}
 
   ngOnInit() {
@@ -51,16 +51,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
 
     // Subscribe to cart count changes
-    this.cartSubscription = this.cartService.cartCount$.subscribe(count => {
-      // Only show pulse animation when count increases
-      if (count > this.cartCount) {
-        this.triggerPulseAnimation();
-      }
-      this.cartCount = count;
-    });
+    // this.cartSubscription = this.cartService.cartCount$.subscribe(count => {
+    //   // Only show pulse animation when count increases
+    //   if (count > this.cartCount) {
+    //     this.triggerPulseAnimation();
+    //   }
+    //   this.cartCount = count;
+    // });
 
     // Initialize cart count from service
-    this.cartCount = this.cartService.getCartCount();
+    // this.cartCount = this.cartService.getCartCount();
   }
 
   triggerPulseAnimation() {

@@ -12,9 +12,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AboutUsComponent } from './components/about-us/about-us.component';
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { WomenComponent } from './components/women/women.component';
-import { CartComponent } from './components/cart/cart.component';
-import { CheckoutComponent } from './components/checkout/checkout.component';
-import { OrdersComponent } from './components/orders/orders.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
@@ -47,9 +44,6 @@ import { NavbarBottomComponent } from './components/navbar-bottom/navbar-bottom.
     AboutUsComponent,
     ContactUsComponent,
     WomenComponent,
-    CartComponent,
-    CheckoutComponent,
-    OrdersComponent,
     AdminComponent,
     LoginComponent,
     SignupComponent,
