@@ -23,6 +23,7 @@ import { ProductFormComponent } from './components/products/product-form/product
 import { ProductsComponent } from './pages/products/products.component';
 import { ProductDetailsComponent } from './pages/product-details/product-details.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { BagComponent } from './components/bag/bag.component';
 
 
 const routes: Routes = [
@@ -52,6 +53,8 @@ const routes: Routes = [
   { path: 'product/add', component: ProductFormComponent },
   { path: 'product/edit/:id', component: ProductFormComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'bag', component: BagComponent },
+
 
 ];
 

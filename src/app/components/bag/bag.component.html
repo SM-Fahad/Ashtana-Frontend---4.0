@@ -1,0 +1,154 @@
+<div class="bag-container">
+  <!-- Header -->
+  <div class="bag-header">
+    <h1 class="bag-title">Shopping Bag</h1>
+    <div class="bag-summary" *ngIf="bag && isLoggedIn">
+      <span class="item-count">{{ totalItems }} {{ totalItems === 1 ? 'item' : 'items' }}</span>
+    </div>
+  </div>
+
+  <!-- Not Logged In State -->
+  <div *ngIf="!isLoggedIn" class="auth-required">
+    <div class="auth-icon">🔐</div>
+    <h2 class="auth-title">Sign In Required</h2>
+    <p class="auth-message">Please sign in to view your shopping bag</p>
+    <div class="auth-actions">
+      <a routerLink="/login" class="btn btn-primary">Sign In</a>
+      <a routerLink="/register" class="btn btn-outline">Create Account</a>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading && isLoggedIn" class="loading-state">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading your bag...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading && isLoggedIn" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <p class="error-message">{{ error }}</p>
+    <button class="btn btn-retry" (click)="loadBag()">Try Again</button>
+  </div>
+
+  <!-- Empty Bag State -->
+  <div *ngIf="isLoggedIn && !bagItems.length && !loading && !error" class="empty-state">
+    <div class="empty-icon">🛒</div>
+    <h2 class="empty-title">Your bag is empty</h2>
+    <p class="empty-message">Discover our products and add items to get started</p>
+    <a routerLink="/products" class="btn btn-primary">Continue Shopping</a>
+  </div>
+
+  <!-- Bag Content -->
+  <div *ngIf="isLoggedIn && bagItems.length && !loading" class="bag-layout">
+    <!-- Bag Items -->
+    <div class="bag-items-section">
+      <div class="section-header">
+        <h2>Bag Items</h2>
+      </div>
+      
+      <div class="bag-items-list">
+        <div *ngFor="let item of bagItems" class="bag-item-card">
+          <!-- Product Image -->
+          <div class="item-image">
+            <img [src]="getProductImage(item)" 
+                 [alt]="item.productName"
+                 class="product-img"
+                 (error)="handleImageError($event)"
+                 loading="lazy" />
+          </div>
+
+          <!-- Item Details -->
+          <div class="item-details">
+            <h3 class="product-name">{{ item.productName }}</h3>
+            <p class="product-price">${{ item.pricePerItem | number:'1.2-2' }}</p>
+            
+            <!-- Quantity Controls -->
+            <div class="quantity-section">
+              <label class="quantity-label">Quantity:</label>
+              <div class="quantity-controls">
+                <button class="quantity-btn" 
+                        (click)="updateQuantity(item, item.quantity - 1)"
+                        [disabled]="item.quantity <= 1 || isItemUpdating(item.id)"
+                        [class.disabled]="item.quantity <= 1 || isItemUpdating(item.id)">
+                  <span class="quantity-icon">−</span>
+                </button>
+                <span class="quantity-display">{{ item.quantity }}</span>
+                <button class="quantity-btn" 
+                        (click)="updateQuantity(item, item.quantity + 1)"
+                        [disabled]="isItemUpdating(item.id)">
+                  <span class="quantity-icon">+</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Item Total -->
+            <div class="item-total">
+              ${{ item.totalPrice | number:'1.2-2' }}
+            </div>
+          </div>
+
+          <!-- Remove Button -->
+          <button class="remove-btn" 
+                  (click)="removeItem(item.id)" 
+                  [disabled]="isItemUpdating(item.id)"
+                  title="Remove item">
+            <span class="remove-icon">×</span>
+            Remove
+          </button>
+        </div>
+      </div>
+
+      <!-- Continue Shopping -->
+      <div class="continue-shopping-section">
+        <a routerLink="/products" class="continue-shopping-link">
+          ← Continue Shopping
+        </a>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary-section">
+      <div class="summary-card">
+        <h3 class="summary-title">Order Summary</h3>
+        
+        <div class="summary-row">
+          <span class="summary-label">Subtotal ({{ totalItems }} items)</span>
+          <span class="summary-value">${{ totalPrice | number:'1.2-2' }}</span>
+        </div>
+        
+        <div class="summary-row">
+          <span class="summary-label">Shipping</span>
+          <span class="summary-value free">FREE</span>
+        </div>
+        
+        <div class="summary-row">
+          <span class="summary-label">Estimated Tax</span>
+          <span class="summary-value">${{ (totalPrice * 0.08) | number:'1.2-2' }}</span>
+        </div>
+        
+        <div class="summary-divider"></div>
+        
+        <div class="summary-total">
+          <span class="total-label">Estimated Total</span>
+          <span class="total-value">${{ (totalPrice * 1.08) | number:'1.2-2' }}</span>
+        </div>
+
+        <button class="btn-checkout" 
+                [disabled]="!bagItems.length"
+                (click)="proceedToCheckout()">
+          Proceed to Checkout
+        </button>
+        
+        <button class="btn-clear" (click)="clearBag()">
+          Clear Entire Bag
+        </button>
+
+        <div class="security-notice">
+          <div class="security-icon">🔒</div>
+          <span class="security-text">Secure checkout guaranteed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

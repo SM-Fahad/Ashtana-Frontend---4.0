@@ -110,8 +110,11 @@
 
       <!-- Add to Bag -->
       <div class="mt-4">
-        <button (click)="addToCart()" class="btn btn-dark btn-lg w-100" [disabled]="!selectedColor || !selectedSize">
-          Add to My Bag
+        <button (click)="addToCart()" 
+                class="btn btn-dark btn-lg w-100" 
+                [disabled]="!selectedColor || !selectedSize || addingToBag">
+          <span *ngIf="addingToBag" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          {{ addingToBag ? 'Adding to Bag...' : 'Add to My Bag' }}
         </button>
       </div>
 

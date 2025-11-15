@@ -1,278 +1,435 @@
-<!-- Empty Cart State -->
-<div *ngIf="isCartEmpty && !orderPlaced" class="empty-cart">
-  <div class="empty-cart-content">
-    <i class="bi bi-cart-x"></i>
-    <h2>Your cart is empty</h2>
-    <p>Add some products to your cart before checking out.</p>
-    <button class="btn btn-dark" (click)="continueShopping()">
-      Continue Shopping
-    </button>
-  </div>
-</div>
-
-<!-- Checkout Form -->
-<div class="checkout-page" *ngIf="!orderPlaced && !isCartEmpty">
-  <div class="container">
-    <div class="checkout-header">
-      <h1>Checkout</h1>
-      <a routerLink="/cart" class="back-link">
-        <i class="bi bi-arrow-left"></i> Back to Cart
-      </a>
+<div class="checkout-container">
+  <!-- Header -->
+  <div class="checkout-header">
+    <h1 class="checkout-title">Checkout</h1>
+    <div class="checkout-progress">
+      <div class="progress-steps">
+        <div class="step" [class.active]="selectedStep === 1" [class.completed]="selectedStep > 1" (click)="goToStep(1)">
+          <div class="step-number">1</div>
+          <span class="step-label">Shipping</span>
+        </div>
+        <div class="step-connector" [class.active]="selectedStep > 1"></div>
+        
+        <div class="step" [class.active]="selectedStep === 2" [class.completed]="selectedStep > 2" (click)="goToStep(2)">
+          <div class="step-number">2</div>
+          <span class="step-label">Payment</span>
+        </div>
+        <div class="step-connector" [class.active]="selectedStep > 2"></div>
+        
+        <div class="step" [class.active]="selectedStep === 3" [class.completed]="selectedStep > 3" (click)="goToStep(3)">
+          <div class="step-number">3</div>
+          <span class="step-label">Review</span>
+        </div>
+      </div>
     </div>
+  </div>
 
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading checkout...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && bag" class="checkout-content">
     <div class="checkout-layout">
-      <!-- Left Column - Forms -->
-      <div class="checkout-forms">
-        <!-- Shipping Information -->
-        <div class="form-section">
-          <h3><i class="bi bi-truck"></i> Shipping Information</h3>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>First Name *</label>
-                <input type="text" [(ngModel)]="checkoutData.firstName" class="form-control" required>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Last Name *</label>
-                <input type="text" [(ngModel)]="checkoutData.lastName" class="form-control" required>
+      <!-- Left Column - Checkout Steps -->
+      <div class="checkout-steps">
+        
+        <!-- Step 1: Shipping Address -->
+        <div *ngIf="selectedStep === 1" class="step-content">
+          <h2 class="step-title">Shipping Address</h2>
+          
+          <!-- Existing Addresses -->
+          <div class="address-selection" *ngIf="addresses.length > 0">
+            <label class="form-label">Select Shipping Address</label>
+            <div class="address-options">
+              <div *ngFor="let address of addresses" class="address-option">
+                <input type="radio" 
+                       [id]="'shipping-' + address.id"
+                       [value]="address.id"
+                       formControlName="shippingAddressId"
+                       (change)="onShippingAddressChange()">
+                <label [for]="'shipping-' + address.id" class="address-card">
+                  <div class="address-header">
+                    <strong>{{ address.recipientName }}</strong>
+                  </div>
+                  <p class="address-text">{{ address.street }}</p>
+                  <p class="address-text">{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                  <p class="address-text">{{ address.country }}</p>
+                  <p class="address-text">📞 {{ address.phone }}</p>
+                </label>
               </div>
             </div>
           </div>
-          
-          <div class="form-group">
-            <label>Email Address *</label>
-            <input type="email" [(ngModel)]="checkoutData.email" class="form-control" required>
+
+          <!-- Add New Address Button -->
+          <div class="add-address-section">
+            <button class="btn btn-outline" (click)="showAddAddressForm = !showAddAddressForm">
+              + Add New Address
+            </button>
           </div>
-          
-          <div class="form-group">
-            <label>Phone Number *</label>
-            <input type="tel" [(ngModel)]="checkoutData.phone" class="form-control" required>
+
+          <!-- New Address Form -->
+          <div *ngIf="showAddAddressForm" class="new-address-form">
+            <h4>Add New Address</h4>
+            <form [formGroup]="newAddressForm">
+              <div class="row">
+                <div class="col-12">
+                  <label class="form-label">Full Name *</label>
+                  <input type="text" class="form-control" formControlName="recipientName" placeholder="Enter full name">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <label class="form-label">Street Address *</label>
+                  <input type="text" class="form-control" formControlName="street" placeholder="Enter street address">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <label class="form-label">City *</label>
+                  <input type="text" class="form-control" formControlName="city" placeholder="Enter city">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">State *</label>
+                  <input type="text" class="form-control" formControlName="state" placeholder="Enter state">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <label class="form-label">ZIP Code *</label>
+                  <input type="text" class="form-control" formControlName="postalCode" placeholder="Enter ZIP code">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">Country *</label>
+                  <input type="text" class="form-control" formControlName="country" placeholder="Enter country">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <label class="form-label">Phone Number *</label>
+                  <input type="text" class="form-control" formControlName="phone" placeholder="Enter phone number">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-cancel" (click)="showAddAddressForm = false">Cancel</button>
+                <button type="button" class="btn btn-primary" (click)="addNewAddress()">Save Address</button>
+              </div>
+            </form>
           </div>
-          
-          <div class="form-group">
-            <label>Street Address *</label>
-            <input type="text" [(ngModel)]="checkoutData.address" class="form-control" required>
+
+          <!-- No Addresses Message -->
+          <div *ngIf="addresses.length === 0 && !showAddAddressForm" class="no-addresses">
+            <p>No addresses found. Please add a shipping address to continue.</p>
           </div>
-          
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>City *</label>
-                <input type="text" [(ngModel)]="checkoutData.city" class="form-control" required>
+
+          <!-- Billing Address Toggle -->
+          <div class="billing-toggle" *ngIf="addresses.length > 0">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="useSameAddress" (change)="onUseSameAddressChange()" [ngModelOptions]="{standalone: true}">
+              <span class="checkmark"></span>
+              Use same address for billing
+            </label>
+          </div>
+
+          <!-- Billing Address Selection -->
+          <div *ngIf="!useSameAddress && addresses.length > 0" class="billing-address">
+            <label class="form-label">Billing Address</label>
+            <div class="address-options">
+              <div *ngFor="let address of addresses" class="address-option">
+                <input type="radio" 
+                       [id]="'billing-' + address.id"
+                       [value]="address.id"
+                       formControlName="billingAddressId">
+                <label [for]="'billing-' + address.id" class="address-card">
+                  <div class="address-header">
+                    <strong>{{ address.recipientName }}</strong>
+                  </div>
+                  <p class="address-text">{{ address.street }}</p>
+                  <p class="address-text">{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                  <p class="address-text">{{ address.country }}</p>
+                </label>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label>Province *</label>
-                <select [(ngModel)]="checkoutData.province" class="form-control" required>
-                  <option value="">Select Province</option>
-                  <option *ngFor="let province of provinces" [value]="province">{{ province }}</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group">
-                <label>Postal Code *</label>
-                <input type="text" [(ngModel)]="checkoutData.postalCode" class="form-control" required>
-              </div>
-            </div>
+          </div>
+
+          <!-- Step Navigation -->
+          <div class="step-actions">
+            <button class="btn btn-next" (click)="nextStep()" [disabled]="!isStep1Valid">
+              Continue to Payment
+            </button>
           </div>
         </div>
 
-        <!-- Payment Method -->
-        <div class="form-section">
-          <h3><i class="bi bi-credit-card"></i> Payment Method</h3>
+        <!-- Step 2: Payment Method -->
+        <div *ngIf="selectedStep === 2" class="step-content">
+          <h2 class="step-title">Payment Method</h2>
           
-          <div class="form-group">
-            <label>Select Payment Method *</label>
-            <select [(ngModel)]="paymentMethod" class="form-control" required>
-              <option *ngFor="let method of paymentMethods" [value]="method.value">
-                {{ method.label }}
-              </option>
-            </select>
+          <div class="payment-methods">
+            <div *ngFor="let method of paymentMethods" class="payment-option">
+              <input type="radio" 
+                     [id]="'payment-' + method.value"
+                     [value]="method.value"
+                     formControlName="paymentMethod">
+              <label [for]="'payment-' + method.value" class="payment-card">
+                <span class="payment-icon">{{ method.icon }}</span>
+                <div class="payment-info">
+                  <span class="payment-name">{{ method.name }}</span>
+                  <span class="payment-description">{{ method.description }}</span>
+                </div>
+              </label>
+            </div>
           </div>
 
-          <!-- Card Payment Fields -->
-          <div *ngIf="showCardFields" class="payment-fields">
-            <div class="form-group">
-              <label>Name on Card *</label>
-              <input type="text" [(ngModel)]="checkoutData.nameOnCard" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label>Card Number *</label>
-              <input type="text" [(ngModel)]="checkoutData.cardNumber" class="form-control"
-                     (input)="formatCardNumber($event)" maxlength="19" placeholder="1234 5678 9012 3456">
-            </div>
-            
+          <!-- Payment Details (for card payments) -->
+          <div *ngIf="checkoutForm.get('paymentMethod')?.value !== 'COD'" class="payment-details">
+            <h4>Card Details</h4>
             <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Expiry Date *</label>
-                  <input type="text" [(ngModel)]="checkoutData.expiryDate" class="form-control"
-                         (input)="formatExpiryDate($event)" maxlength="5" placeholder="MM/YY">
-                </div>
+              <div class="col-12">
+                <label class="form-label">Card Number</label>
+                <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19">
               </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>CVV *</label>
-                  <input type="text" [(ngModel)]="checkoutData.cvv" class="form-control" maxlength="3" placeholder="123">
-                </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <label class="form-label">Expiry Date</label>
+                <input type="text" class="form-control" placeholder="MM/YY" maxlength="5">
+              </div>
+              <div class="col-6">
+                <label class="form-label">CVV</label>
+                <input type="text" class="form-control" placeholder="123" maxlength="3">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label class="form-label">Cardholder Name</label>
+                <input type="text" class="form-control" placeholder="John Doe">
               </div>
             </div>
           </div>
 
-          <!-- PayPal Payment Field -->
-          <div *ngIf="showPaypalField" class="payment-fields">
-            <div class="form-group">
-              <label>PayPal Email *</label>
-              <input type="email" [(ngModel)]="checkoutData.paypalEmail" class="form-control" placeholder="your@paypal.com">
+          <!-- Step Navigation -->
+          <div class="step-actions">
+            <button class="btn btn-prev" (click)="prevStep()">Back</button>
+            <button class="btn btn-next" (click)="nextStep()" [disabled]="!isStep2Valid">
+              Review Order
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Review & Place Order -->
+        <div *ngIf="selectedStep === 3" class="step-content">
+          <h2 class="step-title">Review Your Order</h2>
+          
+          <!-- Order Summary -->
+          <div class="order-review">
+            <div class="review-section">
+              <h4>Shipping Address</h4>
+              <div *ngIf="getSelectedShippingAddress() as address" class="review-item">
+                <p><strong>{{ address.recipientName }}</strong></p>
+                <p>{{ address.street }}</p>
+                <p>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                <p>{{ address.country }}</p>
+                <p>📞 {{ address.phone }}</p>
+              </div>
+            </div>
+
+            <div class="review-section" *ngIf="!useSameAddress">
+              <h4>Billing Address</h4>
+              <div *ngIf="getSelectedBillingAddress() as address" class="review-item">
+                <p><strong>{{ address.recipientName }}</strong></p>
+                <p>{{ address.street }}</p>
+                <p>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</p>
+                <p>{{ address.country }}</p>
+              </div>
+            </div>
+
+            <div class="review-section">
+              <h4>Payment Method</h4>
+              <div class="review-item">
+                <p><strong>{{ selectedPaymentMethod }}</strong></p>
+                <p *ngIf="isCODPayment">
+                  Pay when your order is delivered
+                </p>
+              </div>
+            </div>
+
+            <div class="review-section">
+              <h4>Order Items</h4>
+              <div class="order-items-review">
+                <div *ngFor="let item of bag.items" class="review-order-item">
+                  <img [src]="item.primaryImageUrl || 'assets/images/placeholder-product.jpg'" 
+                       [alt]="item.productName"
+                       class="item-image">
+                  <div class="item-details">
+                    <h5>{{ item.productName }}</h5>
+                    <p>Quantity: {{ item.quantity }}</p>
+                    <p class="price">${{ item.totalPrice | number:'1.2-2' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terms Agreement -->
+            <div class="terms-agreement">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="agreeToTerms">
+                <span class="checkmark"></span>
+                I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>
+              </label>
             </div>
           </div>
 
-          <!-- COD Message -->
-          <div *ngIf="paymentMethod === 'cod'" class="cod-message">
-            <div class="alert alert-info">
-              <i class="bi bi-info-circle"></i>
-              You'll pay cash when your order is delivered.
-            </div>
+          <!-- Step Navigation -->
+          <div class="step-actions">
+            <button class="btn btn-prev" (click)="prevStep()">Back</button>
+            <button class="btn btn-primary" 
+                    (click)="placeOrder()" 
+                    [disabled]="!isStep3Valid || processingOrder">
+              <span *ngIf="processingOrder" class="spinner-border spinner-border-sm me-2"></span>
+              {{ processingOrder ? 'Placing Order...' : 'Place Order' }}
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Right Column - Order Summary -->
-      <div class="order-summary">
+      <div class="order-summary-sidebar">
         <div class="summary-card">
-          <h3>Order Summary</h3>
+          <h3 class="summary-title">Order Summary</h3>
           
-          <!-- Cart Items -->
-          <div class="cart-items">
-            <div *ngFor="let item of cartItems; let i = index" class="cart-item">
-              <img [src]="item.imageUrl" [alt]="item.name" class="item-image">
-              <div class="item-details">
-                <h4>{{ item.name }}</h4>
-                <p class="item-variants" *ngIf="item.selectedColor || item.selectedSize">
-                  {{ item.selectedColor }} {{ item.selectedSize ? '• ' + item.selectedSize : '' }}
-                </p>
-                <div class="item-controls">
-                  <div class="quantity-controls">
-                    <button class="qty-btn" (click)="decreaseQuantity(item)" [disabled]="item.quantity <= 1">
-                      <i class="bi bi-dash"></i>
-                    </button>
-                    <span class="qty-display">{{ item.quantity }}</span>
-                    <button class="qty-btn" (click)="increaseQuantity(item)">
-                      <i class="bi bi-plus"></i>
-                    </button>
-                  </div>
-                  <button class="remove-btn" (click)="removeItem(i)">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
+          <!-- Order Items -->
+          <div class="summary-items">
+            <div *ngFor="let item of bag.items" class="summary-item">
+              <img [src]="item.primaryImageUrl || 'assets/images/placeholder-product.jpg'" 
+                   [alt]="item.productName"
+                   class="item-image">
+              <div class="item-info">
+                <h5 class="item-name">{{ item.productName }}</h5>
+                <p class="item-quantity">Qty: {{ item.quantity }}</p>
               </div>
-              <div class="item-price">
-                {{ (item.price * item.quantity) | currency }}
-              </div>
+              <span class="item-price">${{ item.totalPrice | number:'1.2-2' }}</span>
             </div>
           </div>
 
-          <!-- Coupon Section -->
-          <div class="coupon-section">
-            <label>Have a coupon?</label>
-            <div class="coupon-input">
-              <input type="text" [(ngModel)]="couponCode" class="form-control" placeholder="Enter coupon code">
-              <button class="btn btn-outline" (click)="applyCoupon()">Apply</button>
+          <!-- Coupon Code -->
+          <!-- <div class="coupon-section">
+            <label class="form-label">Coupon Code</label>
+            <div class="coupon-input-group">
+              <input type="text" 
+                     [(ngModel)]="couponCode" 
+                     class="form-control" 
+                     placeholder="Enter coupon code"
+                     [ngModelOptions]="{standalone: true}">
+              <button class="btn btn-coupon" (click)="applyCoupon()">Apply</button>
             </div>
-            <div *ngIf="discount > 0" class="coupon-applied">
-              <span class="success-text">
-                <i class="bi bi-check-circle"></i> 
-                Discount: -{{ discount | currency }}
-              </span>
-              <button class="remove-coupon" (click)="removeCoupon()">
-                <i class="bi bi-x"></i>
-              </button>
-            </div>
-          </div>
+          </div> -->
 
-          <!-- Order Totals -->
-          <div class="order-totals">
-            <div class="total-row">
-              <span>Subtotal</span>
-              <span>{{ subtotal | currency }}</span>
-            </div>
-            <div class="total-row">
-              <span>Shipping</span>
-              <span [class.free-shipping]="shipping === 0">
-                {{ shipping === 0 ? 'FREE' : (shipping | currency) }}
-              </span>
-            </div>
-            <div class="total-row">
-              <span>GST (5%)</span>
-              <span>{{ gst | currency }}</span>
-            </div>
-            <div class="total-row">
-              <span>PST (7%)</span>
-              <span>{{ pst | currency }}</span>
-            </div>
-            <div *ngIf="discount > 0" class="total-row discount-row">
-              <span>Discount</span>
-              <span>-{{ discount | currency }}</span>
-            </div>
-            <div class="total-row grand-total">
-              <span><strong>Total</strong></span>
-              <span><strong>{{ totalPayable | currency }}</strong></span>
-            </div>
-          </div>
-
-          <!-- Place Order Button -->
-          <button class="place-order-btn" (click)="placeOrder()" [disabled]="isProcessing">
-            <span *ngIf="!isProcessing">
-              <i class="bi bi-lock"></i> Place Order • {{ totalPayable | currency }}
-            </span>
-            <span *ngIf="isProcessing">
-              <i class="bi bi-arrow-repeat spinner"></i> Processing...
-            </span>
-          </button>
-
-          <!-- Security Badge -->
-          <div class="security-badge">
-            <i class="bi bi-shield-check"></i>
-            <span>Secure checkout • 256-bit SSL encryption</span>
-          </div>
-        </div>
+          <!-- In the order summary sidebar, replace the coupon section: -->
+<div class="coupon-section">
+  <label class="form-label">Coupon Code</label>
+  <div class="coupon-input-group">
+    <input type="text" 
+           [(ngModel)]="couponCode" 
+           class="form-control" 
+           placeholder="Enter coupon code"
+           [ngModelOptions]="{standalone: true}"
+           [disabled]="!!appliedCoupon">
+    <button class="btn btn-coupon" 
+            (click)="appliedCoupon ? removeCoupon() : applyCoupon()"
+            [disabled]="validatingCoupon">
+      <span *ngIf="validatingCoupon" class="spinner-border spinner-border-sm me-2"></span>
+      {{ appliedCoupon ? 'Remove' : (validatingCoupon ? 'Validating...' : 'Apply') }}
+    </button>
+  </div>
+  
+  <!-- Applied Coupon Display -->
+  <div *ngIf="appliedCoupon" class="applied-coupon mt-2">
+    <div class="alert alert-success d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ appliedCoupon.code }}</strong>
+        <small class="d-block text-success">{{ couponSavingsText }}</small>
       </div>
+      <button type="button" class="btn-close" (click)="removeCoupon()"></button>
     </div>
   </div>
 </div>
 
-<!-- Success Message -->
-<div class="success-page" *ngIf="orderPlaced">
-  <div class="container">
-    <div class="success-content">
-      <div class="success-icon">
-        <i class="bi bi-check-circle"></i>
-      </div>
-      <h1>Order Confirmed!</h1>
-      <p class="success-message">
-        Thank you <strong>{{ checkoutData.firstName }}</strong>! Your order has been successfully placed.
-      </p>
-      <p class="order-details">
-        Order ID: <strong>{{ orderId }}</strong><br>
-        Total: <strong>{{ totalPayable | currency }}</strong><br>
-        Payment Method: <strong>{{ getPaymentMethodLabel() }}</strong>
-      </p>
-      <div class="success-actions">
-        <button class="btn btn-outline" routerLink="/products">
-          <i class="bi bi-bag"></i> Continue Shopping
-        </button>
-        <button class="btn btn-primary" (click)="generateInvoice()" [disabled]="isGeneratingInvoice">
-          <i class="bi bi-receipt"></i> 
-          {{ isGeneratingInvoice ? 'Generating...' : 'Download Invoice' }}
-        </button>
-        <button class="btn btn-secondary" routerLink="/orders">
-          <i class="bi bi-list-check"></i> View Orders
-        </button>
+<!-- Update the price breakdown section: -->
+<div class="price-breakdown">
+  <div class="price-row">
+    <span>Subtotal</span>
+    <span>${{ bag.totalPrice | number:'1.2-2' }}</span>
+  </div>
+  
+  <!-- Coupon Discount -->
+  <div *ngIf="appliedCoupon" class="price-row discount">
+    <span>Coupon Discount</span>
+    <span>- ${{ couponDiscount | number:'1.2-2' }}</span>
+  </div>
+  
+  <div class="price-row">
+    <span>Shipping</span>
+    <span>{{ shippingCost === 0 ? 'FREE' : ('$' + shippingCost | number:'1.2-2') }}</span>
+  </div>
+  <div class="price-row">
+    <span>Tax (12%)</span>
+    <span>${{ taxAmount | number:'1.2-2' }}</span>
+  </div>
+  <div class="price-divider"></div>
+  <div class="price-row total">
+    <span><strong>Total</strong></span>
+    <span><strong>${{ estimatedTotal | number:'1.2-2' }}</strong></span>
+  </div>
+</div>
+
+<!-- In the review section, add coupon info: -->
+<div class="review-section" *ngIf="appliedCoupon">
+  <h4>Applied Coupon</h4>
+  <div class="review-item">
+    <p><strong>{{ appliedCoupon.code }}</strong></p>
+    <p>Savings: ${{ couponDiscount | number:'1.2-2' }}</p>
+    <p *ngIf="appliedCoupon.discountPercentage">{{ appliedCoupon.discountPercentage }}% discount applied</p>
+  </div>
+</div>
+
+          <!-- Price Breakdown -->
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Subtotal</span>
+              <span>${{ bag.totalPrice | number:'1.2-2' }}</span>
+            </div>
+            <div class="price-row">
+              <span>Shipping</span>
+              <span>{{ shippingCost === 0 ? 'FREE' : ('$' + shippingCost | number:'1.2-2') }}</span>
+            </div>
+            <div class="price-row">
+              <span>Tax (12%)</span>
+              <span>${{ taxAmount | number:'1.2-2' }}</span>
+            </div>
+            <div *ngIf="couponCode" class="price-row discount">
+              <span>Discount</span>
+              <span>- ${{ (bag.totalPrice * 0.1) | number:'1.2-2' }}</span>
+            </div>
+            <div class="price-divider"></div>
+            <div class="price-row total">
+              <span><strong>Total</strong></span>
+              <span><strong>${{ estimatedTotal | number:'1.2-2' }}</strong></span>
+            </div>
+          </div>
+
+          <!-- Security Badge -->
+          <div class="security-badge">
+            <div class="security-icon">🔒</div>
+            <span>Secure checkout guaranteed</span>
+          </div>
+        </div>
+
+        <!-- Continue Shopping -->
+        <div class="continue-shopping">
+          <a routerLink="/products" class="link">← Continue Shopping</a>
+        </div>
       </div>
     </div>
   </div>
